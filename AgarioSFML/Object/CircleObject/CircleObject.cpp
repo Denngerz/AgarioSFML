@@ -9,9 +9,7 @@ CircleObject::CircleObject(std::shared_ptr<GameLoop>& gameLoop, float radius, sf
     circleShape->setPosition(position);
 }
 
-void CircleObject::initializeObject()
+const std::shared_ptr<sf::Shape>& CircleObject::getShapeBase() const
 {
-    Object::initializeObject();
-    
-    setShapeBase(circleShape);
+    return circleShape;
 }

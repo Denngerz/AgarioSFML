@@ -16,10 +16,10 @@ public:
         
         obj->initializeObject();
 
-        registerObjectShape(gameLoop, obj);
+        registerObject(gameLoop, obj);
 
         return obj;
     }
 
-    static void registerObjectShape(std::shared_ptr<GameLoop>& game_loop, std::shared_ptr<Object> obj);
+    static void registerObject(std::shared_ptr<GameLoop>& game_loop, std::shared_ptr<Object> obj);
 };

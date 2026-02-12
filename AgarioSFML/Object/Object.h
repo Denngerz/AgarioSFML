@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <memory>
 
+#include "../Interfaces/IDrawable.h"
+#include "../Interfaces/IUpdatable.h"
+
 class GameLoop;
 
 namespace sf
@@ -10,22 +13,20 @@ namespace sf
     class Shape;
 }
 
-class Object
+class Object: public IDrawable, IUpdatable, public std::enable_shared_from_this<Object>
 {
 public:
     virtual ~Object() = default;
-    explicit Object(std::shared_ptr<GameLoop> gameLoop): currentGameLoop(std::move(gameLoop)) {}
+    explicit Object(std::shared_ptr<GameLoop> gameLoop);
 
     virtual void initializeObject();
 
-    const std::shared_ptr<sf::Shape>& getShapeBase() const;
+    const std::shared_ptr<sf::Shape>& getShapeBase() const override;
+
+    virtual void update(float deltaTime) override;
 
     void destroySelf();
 
 protected:
-    void setShapeBase(std::shared_ptr<sf::Shape>& newShape);
-    
     std::weak_ptr<GameLoop> currentGameLoop;
-
-    std::shared_ptr<sf::Shape> shapeBase;
 };

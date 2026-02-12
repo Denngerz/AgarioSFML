@@ -1,5 +1,5 @@
 #include <memory>
-#include "AgarioGame.h"
+#include "Agario/AgarioGame.h"
 
 int main()
 {

@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "../Renderer/Renderer.h"
 
+class Object;
 class Factory;
 
 class GameLoop: public std::enable_shared_from_this<GameLoop>
@@ -20,6 +21,12 @@ public:
 
     void removeUpdatableShape(const std::shared_ptr<sf::Shape>& newShape);
 
+    void addUpdatableObject(const std::shared_ptr<Object>& newObject);
+
+    void removeUpdatableObject(const std::shared_ptr<Object>& oldObject);
+
+    std::weak_ptr<sf::RenderWindow> getWindow() const;
+
 protected:
     std::shared_ptr<sf::RenderWindow> window;
 
@@ -29,15 +36,19 @@ protected:
 
     std::vector<std::shared_ptr<sf::Shape>> updatableShapes;
 
+    std::vector<std::shared_ptr<Object>> updatableObjects;
+
     std::unique_ptr<Factory> factory;
         
     virtual void generate();
     
-    virtual void getInput() const;
+    virtual void getInput();
     
     virtual void logic();
 
     void draw() const;
 
     bool isEndGame() const;
+
+    void updateObjects();
 };
