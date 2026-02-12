@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "../GameLoop/GameLoop.h"
 
+class AgarioAI;
 class AgarioPlayer;
 
 namespace sf
@@ -23,7 +24,11 @@ protected:
 private:
     void generatePlayer();
 
+    void generateEnemies();
+
     std::shared_ptr<AgarioPlayer> player;
+
+    std::vector<std::shared_ptr<AgarioAI>> enemies;
 
     sf::Event currentInputEvent; 
 };

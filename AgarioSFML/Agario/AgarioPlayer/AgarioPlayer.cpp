@@ -2,16 +2,11 @@
 #include "../../GameLoop/GameLoop.h"
 #include <random>
 
-AgarioPlayer::AgarioPlayer(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor, sf::Vector2f position): CircleObject(gameLoop, radius, circleColor, position), speed(100)
+AgarioPlayer::AgarioPlayer(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor, sf::Vector2f position)
+    : CircleObject(gameLoop, radius, circleColor, position),
+      speed(100)
 {
     circleShape->setFillColor(sf::Color(getRandomUInt8_t(), getRandomUInt8_t(), getRandomUInt8_t()));
-}
-
-void AgarioPlayer::initializeObject()
-{
-    CircleObject::initializeObject();
-
-    
 }
 
 void AgarioPlayer::update(float deltaTime)
@@ -23,7 +18,6 @@ void AgarioPlayer::receiveInput(const sf::Event& event)
 {
     proccessInputEvent(event);
 }
-
 
 uint8_t AgarioPlayer::getRandomUInt8_t()
 {
@@ -48,7 +42,7 @@ void AgarioPlayer::moveToTargetPos(float deltaTime)
 {
     sf::Vector2f distance = targetPos - circleShape->getPosition();
 
-    if (distance.length() < 0.5)
+    if (distance.length() < 1.0f)
     {
         return;
     }

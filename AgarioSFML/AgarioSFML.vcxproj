@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Agario\AgarioAI\AgarioAI.cpp" />
     <ClCompile Include="Agario\AgarioGame.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
@@ -531,6 +532,7 @@
     <ClCompile Include="Time\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Agario\AgarioAI\AgarioAI.h" />
     <ClInclude Include="Agario\AgarioGame.h" />
     <ClInclude Include="Agario\AgarioPlayer\AgarioPlayer.h" />
     <ClInclude Include="GameLoop\GameLoop.h" />
