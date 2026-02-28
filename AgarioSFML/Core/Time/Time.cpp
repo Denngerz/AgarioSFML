@@ -1,12 +1,14 @@
 ﻿#include "Time.h"
 #include <SFML/System.hpp>
 
-sf::Clock* Time::clock = nullptr;
-float Time::deltaTime = 0.0f;
-
-void Time::init()
+Time::Time(): deltaTime(0)
 {
     clock = new sf::Clock();
+}
+
+Time::~Time()
+{
+    destroy();
 }
 
 void Time::destroy()

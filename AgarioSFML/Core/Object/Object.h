@@ -19,14 +19,18 @@ public:
     virtual ~Object() = default;
     explicit Object(std::shared_ptr<GameLoop> gameLoop);
 
-    virtual void initializeObject();
-
-    const std::shared_ptr<sf::Shape>& getShapeBase() const override;
-
-    virtual void update(float deltaTime) override;
+    virtual void beginPlay();
 
     void destroySelf();
 
+    virtual void update(float deltaTime) override;
+
+    bool getIsTickable() const;
+
+    const std::shared_ptr<sf::Shape>& getShapeBase() const override;
+
 protected:
     std::weak_ptr<GameLoop> currentGameLoop;
+
+    bool isTickable;
 };

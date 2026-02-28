@@ -8,7 +8,10 @@ class CircleObject: public Object
 public:
     CircleObject(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor, sf::Vector2f position);
 
-    std::shared_ptr<sf::Shape> circleShape;
-
     const std::shared_ptr<sf::Shape>& getShapeBase() const override;
+
+    void update(float deltaTime) override ;
+
+protected:
+    std::shared_ptr<sf::Shape> circleShape;
 };

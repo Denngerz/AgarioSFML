@@ -13,3 +13,8 @@ const std::shared_ptr<sf::Shape>& CircleObject::getShapeBase() const
 {
     return circleShape;
 }
+
+void CircleObject::update(float deltaTime)
+{
+    Object::update(deltaTime);
+}

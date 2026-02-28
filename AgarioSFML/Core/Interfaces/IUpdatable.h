@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <SFML/Window/Event.hpp>
 
 class IUpdatable
 {
