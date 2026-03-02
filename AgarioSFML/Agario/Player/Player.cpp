@@ -5,7 +5,7 @@
 
 Player::Player(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
     : CircleObject(gameLoop, radius, circleColor, position),
-      speed(100),
+      speed(200),
       hasReachedTargetLocation(true)
 {
     isAIControlled = isAI;
@@ -25,6 +25,16 @@ void Player::update(float deltaTime)
     }
 
     tryMoveToTargetPos(deltaTime);
+}
+
+void Player::getEaten()
+{
+    destroySelf();
+}
+
+void Player::onOverlapBegin(std::shared_ptr<Object>& targetObject)
+{
+    tryEatTargetObject(targetObject);
 }
 
 void Player::proccessCurrentInputEvent()
@@ -97,4 +107,30 @@ int Player::getRandomIntInRange(int min, int max) const
     static std::mt19937 rng{std::random_device{}()};
     int value = std::uniform_int_distribution<int>(min, max)(rng);
     return value;
+}
+
+void Player::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
+{
+    std::shared_ptr<IEatable> interfacePtr = std::dynamic_pointer_cast<IEatable>(targetObject);
+
+    if (interfacePtr)
+    {
+        auto targetAsCircleObject = std::dynamic_pointer_cast<CircleObject>(targetObject);
+        
+        if (targetAsCircleObject)
+        {
+            sf::Vector2f firstCenter = circleShape->getPosition();
+            sf::Vector2f secondCenter = targetAsCircleObject->getShapeBase()->getPosition();
+
+            sf::Vector2f delta = secondCenter - firstCenter;
+
+            float targetRadius = targetAsCircleObject->getCircleRadius();
+
+            if (delta.length() < circleRadius && circleRadius > targetRadius)
+            {
+                updateCircleRadius(targetRadius + circleRadius);
+                interfacePtr->getEaten();
+            }
+        }
+    }
 }

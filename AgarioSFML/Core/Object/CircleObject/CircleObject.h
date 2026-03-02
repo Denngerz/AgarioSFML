@@ -12,6 +12,12 @@ public:
 
     void update(float deltaTime) override ;
 
+    float getCircleRadius();
+
 protected:
     std::shared_ptr<sf::Shape> circleShape;
+
+    float circleRadius;
+
+    void updateCircleRadius(float newRadius);
 };

@@ -3,6 +3,8 @@
 
 CircleObject::CircleObject(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor, sf::Vector2f position): Object(gameLoop)
 {
+    circleRadius = radius;
+    
     circleShape = std::make_shared<sf::CircleShape>(radius);
     circleShape->setOrigin(sf::Vector2f(radius, radius));
     circleShape->setFillColor(circleColor);
@@ -17,4 +19,21 @@ const std::shared_ptr<sf::Shape>& CircleObject::getShapeBase() const
 void CircleObject::update(float deltaTime)
 {
     Object::update(deltaTime);
+}
+
+float CircleObject::getCircleRadius()
+{
+    return circleRadius;
+}
+
+void CircleObject::updateCircleRadius(float newRadius)
+{
+    auto circleShapePtr = std::dynamic_pointer_cast<sf::CircleShape>(circleShape);
+    
+    if (circleShapePtr)
+    {
+        circleRadius = newRadius;
+        circleShapePtr->setRadius(circleRadius);
+        circleShapePtr->setOrigin(sf::Vector2f(circleRadius, circleRadius));
+    }
 }

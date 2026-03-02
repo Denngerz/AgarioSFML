@@ -54,6 +54,25 @@ public:
         return true;
     }
 
+    template<class Predicate>
+    void clearIf(Predicate predicate)
+    {
+        size_t currentIndex = 0;
+
+        while (currentIndex < items.size())
+        {
+            if (predicate(items[currentIndex]))
+            {
+                items[currentIndex] = items.back();
+                items.pop_back();
+            }
+            else
+            {
+                ++currentIndex;
+            }
+        }
+    }
+
     bool contains(const Ptr& item) const
     {
         if (!item)
@@ -67,8 +86,11 @@ public:
     void clear() { items.clear(); }
 
     iterator begin() { return items.begin(); }
+    
     iterator end() { return items.end(); }
+    
     const_iterator begin() const { return items.begin(); }
+    
     const_iterator end() const { return items.end(); }
 
 private:
@@ -95,7 +117,7 @@ public:
 private:
     std::shared_ptr<Time> time;
     
-    IterratableSet<sf::Shape> shapes;
+    IterratableSet<sf::Shape> drawableShapes;
     
     IterratableSet<Object> tickableObjects;
 
@@ -116,6 +138,10 @@ private:
     bool isEndGame() const;
 
     void updateObjects();
+
+    void updateObjectsCollision();
+
+    void cleanupInactiveObjects();
 };
 
 template<class T, class... Args>

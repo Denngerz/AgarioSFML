@@ -29,8 +29,16 @@ public:
 
     const std::shared_ptr<sf::Shape>& getShapeBase() const override;
 
+    bool getIsActive() const;
+
+    virtual void checkCollisionWithObject(std::shared_ptr<Object>& targetObject);
+
 protected:
     std::weak_ptr<GameLoop> currentGameLoop;
 
+    bool isActive;
+
     bool isTickable;
+
+    virtual void onOverlapBegin(std::shared_ptr<Object>& targetCircleObject) = 0;
 };

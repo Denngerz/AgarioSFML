@@ -1,17 +1,23 @@
 ﻿#pragma once
 #include "../../Core/Object/CircleObject/CircleObject.h"
+#include "../Interfaces/IEatable.h"
 
 namespace sf
 {
     class RenderWindow;
 }
 
-class Player: public CircleObject
+class Player: public CircleObject, public IEatable
 {
 public:
     Player(std::shared_ptr<GameLoop>& gameLoop, float radius = 10.0f, sf::Color circleColor = sf::Color(225,0,0,225), sf::Vector2f position = sf::Vector2f(0,0), bool isAI = false);
 
     void update(float deltaTime) override;
+
+    virtual void getEaten() override;
+
+protected:
+    virtual void onOverlapBegin(std::shared_ptr<Object>& targetObject) override;
     
 private:
     float speed;
@@ -33,4 +39,6 @@ private:
     void tryChooseRandomTargetPos();
     
     int getRandomIntInRange(int min, int max) const;
+
+    void tryEatTargetObject(std::shared_ptr<Object>& targetObject);
 };

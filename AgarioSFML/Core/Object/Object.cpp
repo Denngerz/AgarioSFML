@@ -1,7 +1,10 @@
 ﻿#include "Object.h"
 #include "../GameLoop/GameLoop.h"
 
-Object::Object(std::shared_ptr<GameLoop> gameLoop): currentGameLoop(std::move(gameLoop)), isTickable(true)
+Object::Object(std::shared_ptr<GameLoop> gameLoop)
+    : currentGameLoop(std::move(gameLoop)),
+      isTickable(true),
+      isActive(true)
 {
 }
 
@@ -15,6 +18,30 @@ const std::shared_ptr<sf::Shape>& Object::getShapeBase() const
     return Empty;
 }
 
+bool Object::getIsActive() const
+{
+    return isActive;
+}
+
+void Object::checkCollisionWithObject(std::shared_ptr<Object>& targetObject)
+{
+    const auto& thisShape = getShapeBase();
+    const auto& targetShape = targetObject->getShapeBase();
+
+    if (!thisShape || !targetShape)
+    {
+        return;
+    }
+
+    sf::FloatRect targetBounds = targetShape->getGlobalBounds();
+    bool isOverlapping = thisShape->getGlobalBounds().findIntersection(targetBounds).has_value();
+
+    if (isOverlapping)
+    {
+        onOverlapBegin(targetObject);
+    }
+}
+
 void Object::update(float deltaTime)
 {
 }
@@ -26,8 +53,5 @@ bool Object::getIsTickable() const
 
 void Object::destroySelf()
 {
-    if (auto gl = currentGameLoop.lock())
-    {
-        gl->removeObject(shared_from_this());
-    }
+    isActive = false;
 }

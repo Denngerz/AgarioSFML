@@ -221,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agario\Game.h" />
+    <ClInclude Include="Agario\Interfaces\IEatable.h" />
     <ClInclude Include="Agario\Player\Player.h" />
     <ClInclude Include="Core\GameLoop\GameLoop.h" />
     <ClInclude Include="Core\Interfaces\IDrawable.h" />

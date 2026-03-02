@@ -20,6 +20,10 @@ void Game::beginPlay()
     generateEnemies();
 }
 
+void Game::onOverlapBegin(std::shared_ptr<Object>& targetObject)
+{
+}
+
 
 void Game::generatePlayer()
 {
@@ -30,7 +34,7 @@ void Game::generateEnemies()
 {
     for (int i = 0; i < 4; ++i)
     {
-        std::shared_ptr<Player> enemy = createObject<Player>(currentGameLoop.lock(), 40.0f, sf::Color(225, 0, 0), sf::Vector2f(700, 600), true);
+        std::shared_ptr<Player> enemy = createObject<Player>(currentGameLoop.lock(), 20.0f, sf::Color(225, 0, 0), sf::Vector2f(700, 600), true);
         enemies.emplace_back(enemy);
     }
 }

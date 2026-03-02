@@ -18,6 +18,9 @@ public:
 
     void beginPlay() override;
 
+protected:
+    void onOverlapBegin(std::shared_ptr<Object>& targetObject) override;
+
 private:
     void generatePlayer();
 

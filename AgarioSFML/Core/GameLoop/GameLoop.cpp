@@ -45,6 +45,8 @@ void GameLoop::logic()
 {
     time->update();
     updateObjects();
+    updateObjectsCollision();
+    cleanupInactiveObjects();
 }
 
 void GameLoop::draw() const
@@ -61,7 +63,7 @@ void GameLoop::updateWindow() const
 {
     window->clear(sf::Color::White);
 
-    for (const auto& shape : shapes)
+    for (const auto& shape : drawableShapes)
     {
         if (shape)
             window->draw(*shape);
@@ -74,11 +76,65 @@ void GameLoop::updateObjects()
 {
     for (const auto& obj : tickableObjects)
     {
-        if (obj)
+        if (obj && obj->getIsActive())
         {
             obj->update(time->deltaTime);
         }
     }
+}
+
+void GameLoop::updateObjectsCollision()
+{
+    for (auto firstIt = tickableObjects.begin(); firstIt != tickableObjects.end(); ++firstIt)
+    {
+        auto secondIt = firstIt;
+        ++secondIt;
+
+        for (; secondIt != tickableObjects.end(); ++secondIt)
+        {
+            std::shared_ptr<Object>& firstObject = *firstIt;
+            std::shared_ptr<Object>& secondObject = *secondIt;
+
+            if (!firstObject || !secondObject)
+            {
+                continue;
+            }
+
+            if (!firstObject->getIsActive() || !secondObject->getIsActive())
+            {
+                continue;
+            }
+
+            firstObject->checkCollisionWithObject(secondObject);
+            secondObject->checkCollisionWithObject(firstObject);
+        }
+    }
+}
+
+void GameLoop::cleanupInactiveObjects()
+{
+    for (const auto& currentObject : tickableObjects)
+    {
+        if (!currentObject)
+        {
+            continue;
+        }
+
+        if (!currentObject->getIsActive())
+        {
+            const auto& shape = currentObject->getShapeBase();
+            if (shape)
+            {
+                drawableShapes.remove(shape);
+            }
+        }
+    }
+
+    tickableObjects.clearIf(
+        [](const std::shared_ptr<Object>& currentObject)
+        {
+            return !currentObject || !currentObject->getIsActive();
+        });
 }
 
 void GameLoop::addObject(const std::shared_ptr<Object>& obj)
@@ -88,14 +144,12 @@ void GameLoop::addObject(const std::shared_ptr<Object>& obj)
         return;
     }
 
-    shapes.add(obj->getShapeBase());
+    drawableShapes.add(obj->getShapeBase());
 
     if (obj->getIsTickable())
     {
         tickableObjects.add(obj);
     }
-
-    
 }
 
 void GameLoop::removeObject(const std::shared_ptr<Object>& obj)
@@ -105,7 +159,7 @@ void GameLoop::removeObject(const std::shared_ptr<Object>& obj)
         return;
     }
 
-    shapes.remove(obj->getShapeBase());
+    drawableShapes.remove(obj->getShapeBase());
     tickableObjects.remove(obj);
 }
 
