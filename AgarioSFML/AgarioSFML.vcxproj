@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Agario\Food\Food.cpp" />
     <ClCompile Include="Agario\Game.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
@@ -220,6 +221,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Agario\Food\Food.h" />
     <ClInclude Include="Agario\Game.h" />
     <ClInclude Include="Agario\Interfaces\IEatable.h" />
     <ClInclude Include="Agario\Player\Player.h" />

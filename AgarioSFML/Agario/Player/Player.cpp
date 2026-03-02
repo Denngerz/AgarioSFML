@@ -62,7 +62,7 @@ void Player::tryMoveToTargetPos(float deltaTime)
 {
     sf::Vector2f distance = targetPos - circleShape->getPosition();
 
-    if (distance.length() < 1.0f)
+    if (distance.length() < 5.0f)
     {
         hasReachedTargetLocation = true;
         return;

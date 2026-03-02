@@ -18,15 +18,29 @@ public:
 
     void beginPlay() override;
 
+    virtual void update(float deltaTime) override;
+
 protected:
     void onOverlapBegin(std::shared_ptr<Object>& targetObject) override;
 
 private:
+    std::shared_ptr<Player> player;
+
+    std::vector<std::shared_ptr<Player>> enemies;
+
+    float spawnTimer;
+
+    float foodSpawnInterval;
+
+    std::weak_ptr<sf::RenderWindow> window;
+    
     void generatePlayer();
 
     void generateEnemies();
 
-    std::shared_ptr<Player> player;
+    void spawnFood();
 
-    std::vector<std::shared_ptr<Player>> enemies;
+    sf::Vector2f getRandomLocation();
+
+    sf::Color getRandomColor();
 };
