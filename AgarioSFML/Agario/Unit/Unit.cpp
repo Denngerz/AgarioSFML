@@ -1,9 +1,9 @@
-﻿#include "Player.h"
+﻿#include "Unit.h"
 #include "../../Core/GameLoop/GameLoop.h"
 #include <SFML/Window/Event.hpp> 
 #include <random>
 
-Player::Player(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
+Unit::Unit(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
     : CircleObject(gameLoop, radius, circleColor, position),
       speed(200),
       hasReachedTargetLocation(true)
@@ -11,7 +11,7 @@ Player::Player(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circ
     isAIControlled = isAI;
 }
 
-void Player::update(float deltaTime)
+void Unit::update(float deltaTime)
 {
     CircleObject::update(deltaTime);
 
@@ -27,17 +27,17 @@ void Player::update(float deltaTime)
     tryMoveToTargetPos(deltaTime);
 }
 
-void Player::becomeEaten()
+void Unit::becomeEaten()
 {
     destroySelf();
 }
 
-void Player::onOverlapBegin(std::shared_ptr<Object>& targetObject)
+void Unit::onOverlapBegin(std::shared_ptr<Object>& targetObject)
 {
     tryEatTargetObject(targetObject);
 }
 
-void Player::proccessCurrentInputEvent()
+void Unit::proccessCurrentInputEvent()
 {
     auto event = currentGameLoop.lock()->getCurrentInput();
     
@@ -50,7 +50,7 @@ void Player::proccessCurrentInputEvent()
     }
 }
 
-uint8_t Player::getRandomUInt8_t() const
+uint8_t Unit::getRandomUInt8_t() const
 {
     static std::mt19937 rng{std::random_device{}()};
     int value = std::uniform_int_distribution<int>(0, 255)(rng);
@@ -58,7 +58,7 @@ uint8_t Player::getRandomUInt8_t() const
 }
 
 
-void Player::tryMoveToTargetPos(float deltaTime)
+void Unit::tryMoveToTargetPos(float deltaTime)
 {
     sf::Vector2f distance = targetPos - circleShape->getPosition();
 
@@ -74,7 +74,7 @@ void Player::tryMoveToTargetPos(float deltaTime)
     circleShape->move(direction * speed * deltaTime);
 }
 
-sf::Vector2f Player::normalize(sf::Vector2f v) const
+sf::Vector2f Unit::normalize(sf::Vector2f v) const
 {
     float len = std::sqrt(v.x * v.x + v.y * v.y);
     
@@ -86,7 +86,7 @@ sf::Vector2f Player::normalize(sf::Vector2f v) const
     return sf::Vector2f(0.f, 0.f);
 }
 
-void Player::tryChooseRandomTargetPos()
+void Unit::tryChooseRandomTargetPos()
 {
     if (!hasReachedTargetLocation)
     {
@@ -102,14 +102,14 @@ void Player::tryChooseRandomTargetPos()
     hasReachedTargetLocation = false;
 }
 
-int Player::getRandomIntInRange(int min, int max) const
+int Unit::getRandomIntInRange(int min, int max) const
 {
     static std::mt19937 rng{std::random_device{}()};
     int value = std::uniform_int_distribution<int>(min, max)(rng);
     return value;
 }
 
-void Player::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
+void Unit::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
 {
     std::shared_ptr<IEatable> interfacePtr = std::dynamic_pointer_cast<IEatable>(targetObject);
 

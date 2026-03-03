@@ -1,10 +1,8 @@
 ﻿#include "Game.h"
-
 #include <random>
 #include <SFML/Graphics.hpp>
-
 #include "Food/Food.h"
-#include "Player/Player.h"
+#include "Unit/Unit.h"
 
 Game::Game(std::shared_ptr<GameLoop> gameLoop)
     : Object(gameLoop),
@@ -46,14 +44,14 @@ void Game::onOverlapBegin(std::shared_ptr<Object>& targetObject)
 
 void Game::generatePlayer()
 {
-    player = createObject<Player>(currentGameLoop.lock(), 40, sf::Color(0, 0, 255), sf::Vector2f(700, 600));
+    player = createObject<Unit>(currentGameLoop.lock(), 40, sf::Color(0, 0, 255), sf::Vector2f(700, 600));
 }
 
 void Game::generateEnemies()
 {
     for (int i = 0; i < 4; ++i)
     {
-        std::shared_ptr<Player> enemy = createObject<Player>(currentGameLoop.lock(), 20.0f, sf::Color(225, 0, 0), sf::Vector2f(700, 600), true);
+        std::shared_ptr<Unit> enemy = createObject<Unit>(currentGameLoop.lock(), 20.0f, sf::Color(225, 0, 0), sf::Vector2f(700, 600), true);
         enemies.emplace_back(enemy);
     }
 }

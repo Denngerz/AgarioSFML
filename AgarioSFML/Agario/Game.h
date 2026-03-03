@@ -2,7 +2,7 @@
 #include "../Core/GameLoop/GameLoop.h"
 #include "../Core/Object/Object.h"
 
-class Player;
+class Unit;
 
 namespace sf
 {
@@ -24,9 +24,9 @@ protected:
     void onOverlapBegin(std::shared_ptr<Object>& targetObject) override;
 
 private:
-    std::shared_ptr<Player> player;
+    std::shared_ptr<Unit> player;
 
-    std::vector<std::shared_ptr<Player>> enemies;
+    std::vector<std::shared_ptr<Unit>> enemies;
 
     float spawnTimer;
 

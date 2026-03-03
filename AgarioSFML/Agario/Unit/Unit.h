@@ -7,10 +7,10 @@ namespace sf
     class RenderWindow;
 }
 
-class Player: public CircleObject, public IEatable
+class Unit: public CircleObject, public IEatable
 {
 public:
-    Player(std::shared_ptr<GameLoop>& gameLoop, float radius = 10.0f, sf::Color circleColor = sf::Color(225,0,0,225), sf::Vector2f position = sf::Vector2f(0,0), bool isAI = false);
+    Unit(std::shared_ptr<GameLoop>& gameLoop, float radius = 10.0f, sf::Color circleColor = sf::Color(225,0,0,225), sf::Vector2f position = sf::Vector2f(0,0), bool isAI = false);
 
     void update(float deltaTime) override;
 

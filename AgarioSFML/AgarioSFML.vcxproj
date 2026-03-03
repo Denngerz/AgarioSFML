@@ -213,7 +213,7 @@
       <AdditionalIncludeDirectories>C:\Users\denng\Documents\Useful\GameDev\AgarioSFMLProject\SFML-3.0.2\include;;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="Agario\Player\Player.cpp" />
+    <ClCompile Include="Agario\Unit\Unit.cpp" />
     <ClCompile Include="Core\GameLoop\GameLoop.cpp" />
     <ClCompile Include="Core\Object\CircleObject\CircleObject.cpp" />
     <ClCompile Include="Core\Object\Object.cpp" />
@@ -224,7 +224,7 @@
     <ClInclude Include="Agario\Food\Food.h" />
     <ClInclude Include="Agario\Game.h" />
     <ClInclude Include="Agario\Interfaces\IEatable.h" />
-    <ClInclude Include="Agario\Player\Player.h" />
+    <ClInclude Include="Agario\Unit\Unit.h" />
     <ClInclude Include="Core\GameLoop\GameLoop.h" />
     <ClInclude Include="Core\Interfaces\IDrawable.h" />
     <ClInclude Include="Core\Interfaces\IUpdatable.h" />
