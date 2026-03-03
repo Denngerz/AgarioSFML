@@ -12,7 +12,7 @@ namespace sf
 class Game: public Object
 {
 public:
-    Game(std::shared_ptr<GameLoop> gameLoop);
+    Game(std::shared_ptr<ObjectFactory> objectFactory);
 
     const std::shared_ptr<sf::Shape>& getShapeBase() const override;
 
@@ -31,8 +31,6 @@ private:
     float spawnTimer;
 
     float foodSpawnInterval;
-
-    std::weak_ptr<sf::RenderWindow> window;
     
     void generatePlayer();
 

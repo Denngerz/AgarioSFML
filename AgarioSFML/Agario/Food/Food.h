@@ -5,7 +5,7 @@
 class Food: public CircleObject, public IEatable
 {
 public:
-    Food(std::shared_ptr<GameLoop>& gameLoop, float radius = 10.0f, sf::Color circleColor = sf::Color(225,0,0,225), sf::Vector2f position = sf::Vector2f(0,0));
+    Food(std::shared_ptr<ObjectFactory> objFactory, float radius = 10.0f, sf::Color circleColor = sf::Color(225,0,0,225), sf::Vector2f position = sf::Vector2f(0,0));
 
     virtual void becomeEaten() override;
 };

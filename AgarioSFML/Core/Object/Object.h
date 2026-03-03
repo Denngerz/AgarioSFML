@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 
+#include "../Factories/ObjectFactory.h"
 #include "../Interfaces/IDrawable.h"
 #include "../Interfaces/IUpdatable.h"
 
@@ -13,11 +14,11 @@ namespace sf
     class Shape;
 }
 
-class Object: public IDrawable, IUpdatable, public std::enable_shared_from_this<Object>
+class Object: public IDrawable, public IUpdatable, public std::enable_shared_from_this<Object>
 {
 public:
     virtual ~Object() = default;
-    explicit Object(std::shared_ptr<GameLoop> gameLoop);
+    explicit Object(std::shared_ptr<ObjectFactory> objFactory);
 
     virtual void beginPlay();
 
@@ -34,11 +35,25 @@ public:
     virtual void checkCollisionWithObject(std::shared_ptr<Object>& targetObject);
 
 protected:
-    std::weak_ptr<GameLoop> currentGameLoop;
-
     bool isActive;
 
     bool isTickable;
 
     virtual void onOverlapBegin(std::shared_ptr<Object>& targetCircleObject);
+
+    template<class T, class... Args>
+    std::shared_ptr<T> spawnObjectOfClass(Args&&... args)
+    {
+        static_assert(std::is_base_of_v<Object, T>, "T must derive from Object");
+
+        if (!objectFactory)
+        {
+            return nullptr;
+        }
+
+        return objectFactory->template createObject<T>(std::forward<Args>(args)...);
+    }
+
+private:
+    std::shared_ptr<ObjectFactory> objectFactory;
 };

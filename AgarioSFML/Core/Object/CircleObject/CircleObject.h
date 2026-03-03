@@ -6,7 +6,7 @@
 class CircleObject: public Object
 {
 public:
-    CircleObject(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor, sf::Vector2f position);
+    CircleObject(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color circleColor, sf::Vector2f position);
 
     const std::shared_ptr<sf::Shape>& getShapeBase() const override;
 

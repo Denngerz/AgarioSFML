@@ -4,12 +4,11 @@
 #include "Food/Food.h"
 #include "Unit/Unit.h"
 
-Game::Game(std::shared_ptr<GameLoop> gameLoop)
-    : Object(gameLoop),
+Game::Game(std::shared_ptr<ObjectFactory> objectFactory)
+    : Object(objectFactory),
       spawnTimer(0),
       foodSpawnInterval(0.5)
 {
-    currentGameLoop = gameLoop;
 }
 
 const std::shared_ptr<sf::Shape>& Game::getShapeBase() const
@@ -20,8 +19,6 @@ const std::shared_ptr<sf::Shape>& Game::getShapeBase() const
 void Game::beginPlay()
 {
     Object::beginPlay();
-
-    window = currentGameLoop.lock()->getWindow();
     
     generatePlayer();
     generateEnemies();
@@ -44,28 +41,28 @@ void Game::onOverlapBegin(std::shared_ptr<Object>& targetObject)
 
 void Game::generatePlayer()
 {
-    player = createObject<Unit>(currentGameLoop.lock(), 40, sf::Color(0, 0, 255), sf::Vector2f(700, 600));
+    player = spawnObjectOfClass<Unit>(40, sf::Color(0, 0, 255), sf::Vector2f(700, 600));
 }
 
 void Game::generateEnemies()
 {
     for (int i = 0; i < 4; ++i)
     {
-        std::shared_ptr<Unit> enemy = createObject<Unit>(currentGameLoop.lock(), 20.0f, sf::Color(225, 0, 0), sf::Vector2f(700, 600), true);
+        std::shared_ptr<Unit> enemy = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), sf::Vector2f(700, 600), true);
         enemies.emplace_back(enemy);
     }
 }
 
 void Game::spawnFood()
 {
-    createObject<Food>(currentGameLoop.lock(), 10, getRandomColor(), getRandomLocation());
+    spawnObjectOfClass<Food>(10, getRandomColor(), getRandomLocation());
 }
 
 sf::Vector2f Game::getRandomLocation()
 {
     static std::mt19937 randomEngine{ std::random_device{}() };
     
-    sf::Vector2u mapSize = window.lock()->getSize();
+    sf::Vector2u mapSize = sf::Vector2u(1400, 1200);
 
     std::uniform_real_distribution<float> xDistribution(0, mapSize.x);
     std::uniform_real_distribution<float> yDistribution(0, mapSize.y);

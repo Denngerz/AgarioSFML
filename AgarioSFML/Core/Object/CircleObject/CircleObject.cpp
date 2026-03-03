@@ -1,7 +1,7 @@
 ﻿#include "CircleObject.h"
 #include <SFML/Graphics/CircleShape.hpp>
 
-CircleObject::CircleObject(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor, sf::Vector2f position): Object(gameLoop)
+CircleObject::CircleObject(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color circleColor, sf::Vector2f position): Object(objFactory)
 {
     circleRadius = radius;
     

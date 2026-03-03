@@ -5,6 +5,9 @@
 int main()
 {
     auto gameLoop = std::make_shared<GameLoop>(1400, 1200, "AgarioSFML");
-    auto agarioGame = createObject<Game>(gameLoop);
+    gameLoop->initialize();
+
+    auto agarioGame = gameLoop->getFactory()->createObject<Game>();
+
     gameLoop->runLoop();
 }

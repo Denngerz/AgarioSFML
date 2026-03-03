@@ -3,8 +3,10 @@
 #include <SFML/Window/Event.hpp> 
 #include <random>
 
-Unit::Unit(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
-    : CircleObject(gameLoop, radius, circleColor, position),
+#include "../../Core/Utils/HelperFunctions.h"
+
+Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
+    : CircleObject(objFactory, radius, circleColor, position),
       speed(200),
       hasReachedTargetLocation(true)
 {
@@ -39,15 +41,15 @@ void Unit::onOverlapBegin(std::shared_ptr<Object>& targetObject)
 
 void Unit::proccessCurrentInputEvent()
 {
-    auto event = currentGameLoop.lock()->getCurrentInput();
-    
-    if (const auto* mv = event.getIf<sf::Event::MouseMoved>())
-    {
-        sf::Vector2i pixel = sf::Vector2i(mv->position.x, mv->position.y);
-        
-        std::weak_ptr<sf::RenderWindow> window = currentGameLoop.lock()->getWindow();
-        targetPos = window.lock()->mapPixelToCoords(pixel);
-    }
+    // auto event = currentGameLoop.lock()->getCurrentInput();
+    //
+    // if (const auto* mv = event.getIf<sf::Event::MouseMoved>())
+    // {
+    //     sf::Vector2i pixel = sf::Vector2i(mv->position.x, mv->position.y);
+    //     
+    //     std::weak_ptr<sf::RenderWindow> window = currentGameLoop.lock()->getWindow();
+    //     targetPos = window.lock()->mapPixelToCoords(pixel);
+    // }
 }
 
 uint8_t Unit::getRandomUInt8_t() const
@@ -69,21 +71,9 @@ void Unit::tryMoveToTargetPos(float deltaTime)
     }
     hasReachedTargetLocation = false;
     
-    sf::Vector2f direction = normalize(distance);
+    sf::Vector2f direction = HelperFunctions::normalize(distance);
 
     circleShape->move(direction * speed * deltaTime);
-}
-
-sf::Vector2f Unit::normalize(sf::Vector2f v) const
-{
-    float len = std::sqrt(v.x * v.x + v.y * v.y);
-    
-    if (len > 0.00001f)
-    {
-        return sf::Vector2f(v.x / len, v.y / len);
-    }
-    
-    return sf::Vector2f(0.f, 0.f);
 }
 
 void Unit::tryChooseRandomTargetPos()
@@ -93,8 +83,10 @@ void Unit::tryChooseRandomTargetPos()
         return;
     }
     
-    std::weak_ptr<sf::RenderWindow> window = currentGameLoop.lock()->getWindow();
-    sf::Vector2u mapSize = window.lock()->getSize();
+    // std::weak_ptr<sf::RenderWindow> window = currentGameLoop.lock()->getWindow();
+    // sf::Vector2u mapSize = window.lock()->getSize();
+
+    sf::Vector2u mapSize = sf::Vector2u(1400, 1200);
 
     targetPos.x = getRandomIntInRange(0, mapSize.x);
     targetPos.y = getRandomIntInRange(0, mapSize.y);

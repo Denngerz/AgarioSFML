@@ -10,7 +10,7 @@ namespace sf
 class Unit: public CircleObject, public IEatable
 {
 public:
-    Unit(std::shared_ptr<GameLoop>& gameLoop, float radius = 10.0f, sf::Color circleColor = sf::Color(225,0,0,225), sf::Vector2f position = sf::Vector2f(0,0), bool isAI = false);
+    Unit(std::shared_ptr<ObjectFactory> objFactory, float radius = 10.0f, sf::Color circleColor = sf::Color(225,0,0,225), sf::Vector2f position = sf::Vector2f(0,0), bool isAI = false);
 
     void update(float deltaTime) override;
 
@@ -33,8 +33,6 @@ private:
     void proccessCurrentInputEvent();
 
     void tryMoveToTargetPos(float deltaTime);
-
-    sf::Vector2f normalize(sf::Vector2f v) const;
 
     void tryChooseRandomTargetPos();
     

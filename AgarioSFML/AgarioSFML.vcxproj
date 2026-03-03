@@ -214,10 +214,12 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Agario\Unit\Unit.cpp" />
+    <ClCompile Include="Core\Factories\ObjectFactory.cpp" />
     <ClCompile Include="Core\GameLoop\GameLoop.cpp" />
     <ClCompile Include="Core\Object\CircleObject\CircleObject.cpp" />
     <ClCompile Include="Core\Object\Object.cpp" />
     <ClCompile Include="Core\Time\Time.cpp" />
+    <ClCompile Include="Core\Utils\HelperFunctions.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -225,12 +227,14 @@
     <ClInclude Include="Agario\Game.h" />
     <ClInclude Include="Agario\Interfaces\IEatable.h" />
     <ClInclude Include="Agario\Unit\Unit.h" />
+    <ClInclude Include="Core\Factories\ObjectFactory.h" />
     <ClInclude Include="Core\GameLoop\GameLoop.h" />
     <ClInclude Include="Core\Interfaces\IDrawable.h" />
     <ClInclude Include="Core\Interfaces\IUpdatable.h" />
     <ClInclude Include="Core\Object\CircleObject\CircleObject.h" />
     <ClInclude Include="Core\Object\Object.h" />
     <ClInclude Include="Core\Time\Time.h" />
+    <ClInclude Include="Core\Utils\HelperFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

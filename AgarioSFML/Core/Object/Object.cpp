@@ -1,10 +1,10 @@
 ﻿#include "Object.h"
 #include "../GameLoop/GameLoop.h"
 
-Object::Object(std::shared_ptr<GameLoop> gameLoop)
-    : currentGameLoop(std::move(gameLoop)),
-      isTickable(true),
-      isActive(true)
+Object::Object(std::shared_ptr<ObjectFactory> objFactory)
+    : isTickable(true),
+      isActive(true),
+      objectFactory(objFactory)
 {
 }
 

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 
+class ObjectFactory;
 class Time;
 class Object;
 class Factory;
@@ -111,8 +112,12 @@ public:
     void removeObject(const std::shared_ptr<Object>& obj);
 
     std::weak_ptr<sf::RenderWindow> getWindow() const;
+    
+    std::shared_ptr<ObjectFactory> getFactory() const;
 
     sf::Event& getCurrentInput();
+
+    void initialize();
 
 private:
     std::shared_ptr<Time> time;
@@ -122,6 +127,8 @@ private:
     IterratableSet<Object> tickableObjects;
 
     std::shared_ptr<sf::RenderWindow> window;
+
+    std::shared_ptr<ObjectFactory> objectFactory;
 
     sf::Event currentInputEvent;
 
@@ -143,17 +150,3 @@ private:
 
     void cleanupInactiveObjects();
 };
-
-template<class T, class... Args>
-std::shared_ptr<T> createObject(std::shared_ptr<GameLoop> gameLoop, Args&&... args)
-{
-    static_assert(std::is_base_of_v<Object, T>, "T must be an object");
-
-    auto obj = std::make_shared<T>(gameLoop, std::forward<Args>(args)...);
-
-    obj->beginPlay();
-
-    gameLoop->addObject(std::static_pointer_cast<Object>(obj));
-
-    return obj;
-}

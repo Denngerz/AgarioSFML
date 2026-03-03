@@ -168,7 +168,17 @@ sf::Event& GameLoop::getCurrentInput()
     return currentInputEvent;
 }
 
+void GameLoop::initialize()
+{
+    objectFactory = std::make_shared<ObjectFactory>(shared_from_this());
+}
+
 std::weak_ptr<sf::RenderWindow> GameLoop::getWindow() const
 {
     return window;
+}
+
+std::shared_ptr<ObjectFactory> GameLoop::getFactory() const
+{
+    return objectFactory;
 }
