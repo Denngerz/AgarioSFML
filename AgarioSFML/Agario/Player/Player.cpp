@@ -27,7 +27,7 @@ void Player::update(float deltaTime)
     tryMoveToTargetPos(deltaTime);
 }
 
-void Player::getEaten()
+void Player::becomeEaten()
 {
     destroySelf();
 }
@@ -129,7 +129,7 @@ void Player::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
             if (delta.length() < circleRadius && circleRadius > targetRadius)
             {
                 updateCircleRadius(targetRadius + circleRadius);
-                interfacePtr->getEaten();
+                interfacePtr->becomeEaten();
             }
         }
     }

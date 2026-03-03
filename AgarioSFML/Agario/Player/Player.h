@@ -14,7 +14,7 @@ public:
 
     void update(float deltaTime) override;
 
-    virtual void getEaten() override;
+    virtual void becomeEaten() override;
 
 protected:
     virtual void onOverlapBegin(std::shared_ptr<Object>& targetObject) override;

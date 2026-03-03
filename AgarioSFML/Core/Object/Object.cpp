@@ -42,6 +42,10 @@ void Object::checkCollisionWithObject(std::shared_ptr<Object>& targetObject)
     }
 }
 
+void Object::onOverlapBegin(std::shared_ptr<Object>& targetCircleObject)
+{
+}
+
 void Object::update(float deltaTime)
 {
 }

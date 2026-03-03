@@ -3,5 +3,5 @@
 class IEatable
 {
 public:
-    virtual void getEaten() = 0;
+    virtual void becomeEaten() = 0;
 };

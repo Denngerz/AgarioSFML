@@ -44,7 +44,6 @@ void Game::onOverlapBegin(std::shared_ptr<Object>& targetObject)
 {
 }
 
-
 void Game::generatePlayer()
 {
     player = createObject<Player>(currentGameLoop.lock(), 40, sf::Color(0, 0, 255), sf::Vector2f(700, 600));

@@ -40,5 +40,5 @@ protected:
 
     bool isTickable;
 
-    virtual void onOverlapBegin(std::shared_ptr<Object>& targetCircleObject) = 0;
+    virtual void onOverlapBegin(std::shared_ptr<Object>& targetCircleObject);
 };

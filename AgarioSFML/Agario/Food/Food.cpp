@@ -5,11 +5,7 @@ Food::Food(std::shared_ptr<GameLoop>& gameLoop, float radius, sf::Color circleCo
 {
 }
 
-void Food::getEaten()
+void Food::becomeEaten()
 {
     destroySelf();
-}
-
-void Food::onOverlapBegin(std::shared_ptr<Object>& targetObject)
-{
 }
