@@ -27,28 +27,47 @@ void InputManager::processCurrentFrameInputEvents()
     {
         for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
         {
-            for (const InputKey& currentKey : currentMapping.inputKeys)
+            for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
             {
                 if (IsKeyboardEventMatchingInputKey(currentEvent, currentKey))
                 {
-                    // action matched
+                    triggerAction(currentMapping.actionName);
                 }
             }
         }
     }
 }
 
-bool InputManager::IsKeyboardEventMatchingInputKey(const sf::Event& currentEvent, const InputKey& currentKey) const
+bool InputManager::IsKeyboardEventMatchingInputKey(const sf::Event& currentEvent, const sf::Keyboard::Key& currentKey) const
 {
     if (const auto* keyPressedEvent = currentEvent.getIf<sf::Event::KeyPressed>())
     {
-        return keyPressedEvent->code == currentKey.keyValue;
+        return keyPressedEvent->code == currentKey;
     }
 
     if (const auto* keyReleasedEvent = currentEvent.getIf<sf::Event::KeyReleased>())
     {
-        return keyReleasedEvent->code == currentKey.keyValue;
+        return keyReleasedEvent->code == currentKey;
     }
 
     return false;
+}
+
+void InputManager::bindAction(const std::string& actionName, std::function<void()> callback)
+{
+    actionCallbacks[actionName].push_back(std::move(callback));
+}
+
+void InputManager::triggerAction(const std::string& actionName)
+{
+    auto foundCallbacks = actionCallbacks.find(actionName);
+    if (foundCallbacks == actionCallbacks.end())
+    {
+        return;
+    }
+
+    for (const auto& callback : foundCallbacks->second)
+    {
+        callback();
+    }
 }

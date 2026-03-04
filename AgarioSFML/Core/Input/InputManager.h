@@ -6,34 +6,16 @@
 #include <string>
 #include <unordered_map>
 
-enum class ValueType
+enum class InputEventType
 {
-    Bool = 0,
-    TwoDimensional = 1
-};
-
-enum class ValueModifier
-{
-    Negate = 0,
-    SwizzleAxis = 1
-};
-
-struct InputAction
-{
-    std::string actionName;
-    ValueType inputType;
-};
-
-struct InputKey
-{
-    sf::Keyboard::Key keyValue;
-    std::vector<ValueModifier> valueModifiers;
+    Pressed,
+    Released
 };
 
 struct InputMapping
 {
-    InputAction inputAction;
-    std::vector<InputKey> inputKeys;
+    std::string actionName;
+    std::vector<sf::Keyboard::Key> inputKeys;
 };
 
 struct InputMappingContext
@@ -61,7 +43,7 @@ private:
     
     void processCurrentFrameInputEvents();
     
-    bool IsKeyboardEventMatchingInputKey(const sf::Event& currentEvent, const InputKey& currentKey) const;
+    bool IsKeyboardEventMatchingInputKey(const sf::Event& currentEvent, const sf::Keyboard::Key& currentKey) const;
 
     std::unordered_map<std::string, std::vector<std::function<void()>>> actionCallbacks;
 };
