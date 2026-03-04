@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 
+class InputManager;
 class ObjectFactory;
 class Time;
 class Object;
@@ -130,15 +131,17 @@ private:
 
     std::shared_ptr<ObjectFactory> objectFactory;
 
+    std::shared_ptr<InputManager> inputManager;
+    
     sf::Event currentInputEvent;
 
     void updateWindow() const;
 
-    virtual void generate();
+    void generate();
     
-    virtual void getInput();
+    void processInput();
     
-    virtual void logic();
+    void logic();
 
     void draw() const;
     

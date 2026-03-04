@@ -216,6 +216,7 @@
     <ClCompile Include="Agario\Unit\Unit.cpp" />
     <ClCompile Include="Core\Factories\ObjectFactory.cpp" />
     <ClCompile Include="Core\GameLoop\GameLoop.cpp" />
+    <ClCompile Include="Core\Input\InputManager.cpp" />
     <ClCompile Include="Core\Object\CircleObject\CircleObject.cpp" />
     <ClCompile Include="Core\Object\Object.cpp" />
     <ClCompile Include="Core\Time\Time.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="Agario\Unit\Unit.h" />
     <ClInclude Include="Core\Factories\ObjectFactory.h" />
     <ClInclude Include="Core\GameLoop\GameLoop.h" />
+    <ClInclude Include="Core\Input\InputManager.h" />
     <ClInclude Include="Core\Interfaces\IDrawable.h" />
     <ClInclude Include="Core\Interfaces\IUpdatable.h" />
     <ClInclude Include="Core\Object\CircleObject\CircleObject.h" />

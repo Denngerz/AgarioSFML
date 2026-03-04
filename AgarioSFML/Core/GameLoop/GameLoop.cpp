@@ -1,6 +1,7 @@
 ﻿#include "GameLoop.h"
 #include <optional>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include "../Input/InputManager.h"
 #include "../Object/Object.h"
 #include "../Time/Time.h"
 
@@ -15,6 +16,13 @@ GameLoop::GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::str
     );
 
     window->setFramerateLimit(60);
+
+    inputManager = std::make_shared<InputManager>();
+}
+
+void GameLoop::initialize()
+{
+    objectFactory = std::make_shared<ObjectFactory>(shared_from_this());
 }
 
 void GameLoop::runLoop()
@@ -23,7 +31,7 @@ void GameLoop::runLoop()
 
     while (!isEndGame())
     {
-        getInput();
+        processInput();
         logic();
         draw();
     }
@@ -33,11 +41,13 @@ void GameLoop::generate()
 {
 }
 
-void GameLoop::getInput()
+void GameLoop::processInput()
 {
-    while (const std::optional<sf::Event> ev = window->pollEvent())
+    std::vector<sf::Event> frameEvents;
+
+    while (const std::optional event = window->pollEvent())
     {
-        currentInputEvent = *ev;
+        frameEvents.push_back(*event);
     }
 }
 
@@ -166,11 +176,6 @@ void GameLoop::removeObject(const std::shared_ptr<Object>& obj)
 sf::Event& GameLoop::getCurrentInput()
 {
     return currentInputEvent;
-}
-
-void GameLoop::initialize()
-{
-    objectFactory = std::make_shared<ObjectFactory>(shared_from_this());
 }
 
 std::weak_ptr<sf::RenderWindow> GameLoop::getWindow() const
