@@ -18,7 +18,7 @@ class Object: public IDrawable, public IUpdatable, public std::enable_shared_fro
 {
 public:
     virtual ~Object() = default;
-    explicit Object(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input);
+    explicit Object(std::shared_ptr<ObjectFactory> objFactory);
 
     virtual void beginPlay();
 
@@ -34,18 +34,10 @@ public:
 
     virtual void checkCollisionWithObject(std::shared_ptr<Object>& targetObject);
 
-    virtual void becomePossesed(std::shared_ptr<Controller> newController);
-    
-    virtual void becomeUnpossesed();
-
 protected:
     bool isActive;
 
     bool isTickable;
-
-    std::shared_ptr<InputManager> inputManager;
-
-    std::shared_ptr<Controller> currentController;
 
     virtual void onOverlapBegin(std::shared_ptr<Object>& targetCircleObject);
 

@@ -4,8 +4,8 @@
 #include "../../Core/Utils/HelperFunctions.h"
 #include "../../Core/Controller/Controller.h"
 
-Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
-    : CircleObject(objFactory, input, radius, circleColor, position),
+Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
+    : CirclePawn(objFactory, radius, circleColor, position),
       speed(200),
       lastDeltaTime(0),
       hasReachedTargetLocation(true)
@@ -15,7 +15,7 @@ Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManag
 
 void Unit::update(float deltaTime)
 {
-    CircleObject::update(deltaTime);
+    CirclePawn::update(deltaTime);
 
     lastDeltaTime = deltaTime;
     
@@ -28,12 +28,18 @@ void Unit::update(float deltaTime)
 
 void Unit::becomeEaten()
 {
-    if (currentController)
-    {
-        currentController->unpossessObject();
-    }
     
     destroySelf();
+}
+
+float Unit::getRadius()
+{
+    return circleRadius;
+}
+
+sf::Vector2f Unit::getPosition()
+{
+    return circleShape->getPosition();
 }
 
 void Unit::moveInDirection(sf::Vector2f dir)
@@ -44,11 +50,6 @@ void Unit::moveInDirection(sf::Vector2f dir)
 void Unit::setIsAIControlled(bool isAI)
 {
     isAIControlled = isAI;
-}
-
-void Unit::becomeUnpossesed()
-{
-    CircleObject::becomeUnpossesed();
 }
 
 void Unit::onOverlapBegin(std::shared_ptr<Object>& targetObject)
@@ -93,22 +94,17 @@ void Unit::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
 
     if (interfacePtr)
     {
-        auto targetAsCircleObject = std::dynamic_pointer_cast<CircleObject>(targetObject);
-        
-        if (targetAsCircleObject)
+        sf::Vector2f firstCenter = circleShape->getPosition();
+        sf::Vector2f secondCenter = interfacePtr->getPosition();
+
+        sf::Vector2f delta = secondCenter - firstCenter;
+
+        float targetRadius = interfacePtr->getRadius();
+
+        if (delta.length() < circleRadius && circleRadius > targetRadius)
         {
-            sf::Vector2f firstCenter = circleShape->getPosition();
-            sf::Vector2f secondCenter = targetAsCircleObject->getShapeBase()->getPosition();
-
-            sf::Vector2f delta = secondCenter - firstCenter;
-
-            float targetRadius = targetAsCircleObject->getCircleRadius();
-
-            if (delta.length() < circleRadius && circleRadius > targetRadius)
-            {
-                updateCircleRadius(targetRadius + circleRadius);
-                interfacePtr->becomeEaten();
-            }
+            updateCircleRadius(targetRadius + circleRadius);
+            interfacePtr->becomeEaten();
         }
     }
 }

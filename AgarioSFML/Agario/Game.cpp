@@ -4,11 +4,10 @@
 #include "Food/Food.h"
 #include "Controllers/PlayerController.h"
 #include "Unit/Unit.h"
-#include "../Core/Input/InputManager.h"
 #include "../Core/Utils/HelperFunctions.h"
 
-Game::Game(std::shared_ptr<ObjectFactory> objectFactory, std::shared_ptr<InputManager> input)
-    : Object(objectFactory, input),
+Game::Game(std::shared_ptr<ObjectFactory> objectFactory)
+    : Object(objectFactory),
       spawnTimer(0),
       foodSpawnInterval(0.5)
 {
@@ -44,7 +43,7 @@ void Game::generatePlayer()
 
     playerController = spawnObjectOfClass<PlayerController>();
 
-    playerController->possessObject(std::dynamic_pointer_cast<Object>(player));
+    playerController->possessPawn(std::dynamic_pointer_cast<Pawn>(player));
 }
 
 void Game::generateEnemies()

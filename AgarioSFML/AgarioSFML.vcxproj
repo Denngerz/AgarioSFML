@@ -214,6 +214,7 @@
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
     <ClCompile Include="Agario\Controllers\PlayerController.cpp" />
+    <ClCompile Include="Agario\Unit\CirclePawn.cpp" />
     <ClCompile Include="Agario\Unit\Unit.cpp" />
     <ClCompile Include="Core\Controller\Controller.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
@@ -296,8 +297,8 @@
     <ClCompile Include="Core\Factories\ObjectFactory.cpp" />
     <ClCompile Include="Core\GameLoop\GameLoop.cpp" />
     <ClCompile Include="Core\Input\InputManager.cpp" />
-    <ClCompile Include="Core\Object\CircleObject\CircleObject.cpp" />
     <ClCompile Include="Core\Object\Object.cpp" />
+    <ClCompile Include="Core\Object\Pawn\Pawn.cpp" />
     <ClCompile Include="Core\Time\Time.cpp" />
     <ClCompile Include="Core\Utils\HelperFunctions.cpp" />
     <ClCompile Include="main.cpp" />
@@ -307,6 +308,7 @@
     <ClInclude Include="Agario\Game.h" />
     <ClInclude Include="Agario\Interfaces\IEatable.h" />
     <ClInclude Include="Agario\Controllers\PlayerController.h" />
+    <ClInclude Include="Agario\Unit\CirclePawn.h" />
     <ClInclude Include="Agario\Unit\Unit.h" />
     <ClInclude Include="Core\Controller\Controller.h" />
     <ClInclude Include="Core\Factories\ObjectFactory.h" />
@@ -314,8 +316,8 @@
     <ClInclude Include="Core\Input\InputManager.h" />
     <ClInclude Include="Core\Interfaces\IDrawable.h" />
     <ClInclude Include="Core\Interfaces\IUpdatable.h" />
-    <ClInclude Include="Core\Object\CircleObject\CircleObject.h" />
     <ClInclude Include="Core\Object\Object.h" />
+    <ClInclude Include="Core\Object\Pawn\Pawn.h" />
     <ClInclude Include="Core\Time\Time.h" />
     <ClInclude Include="Core\Utils\HelperFunctions.h" />
   </ItemGroup>

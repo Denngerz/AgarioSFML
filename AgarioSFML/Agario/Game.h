@@ -13,7 +13,7 @@ namespace sf
 class Game: public Object
 {
 public:
-    Game(std::shared_ptr<ObjectFactory> objectFactory, std::shared_ptr<InputManager> input);
+    Game(std::shared_ptr<ObjectFactory> objectFactory);
 
     const std::shared_ptr<sf::Shape>& getShapeBase() const override;
 

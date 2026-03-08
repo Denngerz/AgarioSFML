@@ -9,9 +9,9 @@ PlayerController::PlayerController(std::shared_ptr<ObjectFactory> objFactory, st
     controlledUnit = nullptr;
 }
 
-void PlayerController::possessObject(std::shared_ptr<Object> targetObj)
+void PlayerController::possessPawn(std::shared_ptr<Pawn> targetObj)
 {
-    Controller::possessObject(targetObj);
+    Controller::possessPawn(targetObj);
 
     if (auto objAsUnit = std::dynamic_pointer_cast<Unit>(targetObj))
     {
@@ -19,9 +19,9 @@ void PlayerController::possessObject(std::shared_ptr<Object> targetObj)
     }
 }
 
-void PlayerController::unpossessObject()
+void PlayerController::unpossessPawn()
 {
-    Controller::unpossessObject();
+    Controller::unpossessPawn();
 
     controlledUnit = nullptr;
 }

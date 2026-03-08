@@ -1,33 +1,29 @@
 ﻿#include "Controller.h"
+#include "../Object/Pawn/Pawn.h"
 
-Controller::Controller(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input): Object(objFactory, input)
+Controller::Controller(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input): Object(objFactory)
 {
+    inputManager = input;
 }
 
-void Controller::possessObject(std::shared_ptr<Object> targetObj)
+void Controller::possessPawn(std::shared_ptr<Pawn> targetPawn)
 {
-    controlledObject = targetObj;
+    controlledPawn = targetPawn;
     
     auto selfAsObject = Object::shared_from_this();
     
     auto selfAsController = std::static_pointer_cast<Controller>(selfAsObject);
 
-    controlledObject->becomePossesed(selfAsController);
+    controlledPawn->becomePossesed(selfAsController);
 }
 
-void Controller::unpossessObject()
+void Controller::unpossessPawn()
 {
-    if (!controlledObject)
+    if (!controlledPawn)
     {
         return;
     }
 
-    controlledObject->becomeUnpossesed();
-    controlledObject = nullptr;
+    controlledPawn->becomeUnpossesed();
+    controlledPawn = nullptr;
 }
-
-void Controller::beginPlay()
-{
-    Object::beginPlay();
-}
-

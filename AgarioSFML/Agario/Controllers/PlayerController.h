@@ -10,9 +10,9 @@ class PlayerController: public Controller
 public:
     PlayerController(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input);
 
-    virtual void possessObject(std::shared_ptr<Object> targetObj) override;
+    virtual void possessPawn(std::shared_ptr<Pawn> targetPawn) override;
 
-    virtual void unpossessObject() override;
+    virtual void unpossessPawn() override;
 
     virtual void beginPlay() override;
 
