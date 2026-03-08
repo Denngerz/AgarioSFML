@@ -1,4 +1,5 @@
 ﻿#include "GameLoop.h"
+
 #include <optional>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "../Input/InputManager.h"
@@ -49,6 +50,8 @@ void GameLoop::processInput()
     {
         frameEvents.push_back(*event);
     }
+
+    inputManager->updateCurrentFrameInputEvents(frameEvents);
 }
 
 void GameLoop::logic()
@@ -173,11 +176,6 @@ void GameLoop::removeObject(const std::shared_ptr<Object>& obj)
     tickableObjects.remove(obj);
 }
 
-sf::Event& GameLoop::getCurrentInput()
-{
-    return currentInputEvent;
-}
-
 std::weak_ptr<sf::RenderWindow> GameLoop::getWindow() const
 {
     return window;
@@ -186,4 +184,9 @@ std::weak_ptr<sf::RenderWindow> GameLoop::getWindow() const
 std::shared_ptr<ObjectFactory> GameLoop::getFactory() const
 {
     return objectFactory;
+}
+
+std::shared_ptr<InputManager> GameLoop::getInputManager() const
+{
+    return inputManager;
 }

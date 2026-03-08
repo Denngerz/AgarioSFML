@@ -2,72 +2,206 @@
 
 InputManager::InputManager()
 {
+    InputMappingContext testContext
+    {
+            {
+                { "MoveUp",    { sf::Keyboard::Key::W } },
+                { "MoveDown",  { sf::Keyboard::Key::S } },
+                { "MoveLeft",  { sf::Keyboard::Key::A } },
+                { "MoveRight", { sf::Keyboard::Key::D } },
+                { "Swap",      { sf::Keyboard::Key::F } }
+            }
+    };
+
+    currentInputMappingContext = testContext;
 }
 
-void InputManager::updateCurrentFrameInputEvents(const std::vector<sf::Event>& newFrameInputEvents)
+void InputManager::updateCurrentFrameInputEvents(const std::vector<sf::Event>& inputEvents)
 {
-    currentFrameInputEvents = newFrameInputEvents;
+    currentFrameInputEvents = inputEvents;
+
+    justPressedKeys.clear();
+    justReleasedKeys.clear();
+
+    for (const sf::Event& currentEvent : currentFrameInputEvents)
+    {
+        if (const auto* keyPressedEvent = currentEvent.getIf<sf::Event::KeyPressed>())
+        {
+            const sf::Keyboard::Key pressedKey = keyPressedEvent->code;
+
+            if (!isKeyPressed(pressedKey))
+            {
+                keyStates[pressedKey] = true;
+                justPressedKeys.push_back(pressedKey);
+            }
+        }
+
+        if (const auto* keyReleasedEvent = currentEvent.getIf<sf::Event::KeyReleased>())
+        {
+            const sf::Keyboard::Key releasedKey = keyReleasedEvent->code;
+
+            if (isKeyPressed(releasedKey))
+            {
+                keyStates[releasedKey] = false;
+                justReleasedKeys.push_back(releasedKey);
+            }
+        }
+    }
 
     processCurrentFrameInputEvents();
 }
 
-void InputManager::setInputMappingContext(const InputMappingContext& newInputMappingContext)
-{
-    currentInputMappingContext = newInputMappingContext;
-}
-
 void InputManager::processCurrentFrameInputEvents()
 {
-    if (currentInputMappingContext.inputMappings.empty())
-    {
-        return;
-    }
-
-    for (const sf::Event& currentEvent : currentFrameInputEvents)
+    for (const sf::Keyboard::Key& pressedKey : justPressedKeys)
     {
         for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
         {
             for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
             {
-                if (IsKeyboardEventMatchingInputKey(currentEvent, currentKey))
+                if (currentKey == pressedKey)
                 {
-                    triggerAction(currentMapping.actionName);
+                    auto foundCallbacks = pressedCallbacks.find(currentMapping.actionName);
+                    if (foundCallbacks != pressedCallbacks.end())
+                    {
+                        for (const auto& callback : foundCallbacks->second)
+                        {
+                            callback();
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    for (const auto& [key, isPressed] : keyStates)
+    {
+        if (!isPressed)
+        {
+            continue;
+        }
+
+        for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
+        {
+            for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
+            {
+                if (currentKey == key)
+                {
+                    auto foundCallbacks = heldCallbacks.find(currentMapping.actionName);
+                    if (foundCallbacks != heldCallbacks.end())
+                    {
+                        for (const auto& callback : foundCallbacks->second)
+                        {
+                            callback();
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    for (const sf::Keyboard::Key& releasedKey : justReleasedKeys)
+    {
+        for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
+        {
+            for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
+            {
+                if (currentKey == releasedKey)
+                {
+                    auto foundCallbacks = releasedCallbacks.find(currentMapping.actionName);
+                    if (foundCallbacks != releasedCallbacks.end())
+                    {
+                        for (const auto& callback : foundCallbacks->second)
+                        {
+                            callback();
+                        }
+                    }
+
+                    break;
                 }
             }
         }
     }
 }
 
-bool InputManager::IsKeyboardEventMatchingInputKey(const sf::Event& currentEvent, const sf::Keyboard::Key& currentKey) const
+void InputManager::setInputMappingContext(const InputMappingContext& newContext)
 {
-    if (const auto* keyPressedEvent = currentEvent.getIf<sf::Event::KeyPressed>())
-    {
-        return keyPressedEvent->code == currentKey;
-    }
+    currentInputMappingContext = newContext;
+}
 
-    if (const auto* keyReleasedEvent = currentEvent.getIf<sf::Event::KeyReleased>())
+void InputManager::bindAction(const std::string& actionName, InputTriggerType triggerType, std::function<void()> callback)
+{
+    switch (triggerType)
     {
-        return keyReleasedEvent->code == currentKey;
+    case InputTriggerType::Pressed:
+        pressedCallbacks[actionName].push_back(std::move(callback));
+        break;
+
+    case InputTriggerType::Released:
+        releasedCallbacks[actionName].push_back(std::move(callback));
+        break;
+
+    case InputTriggerType::Held:
+        heldCallbacks[actionName].push_back(std::move(callback));
+        break;
+    }
+}
+
+bool InputManager::isActionPressed(const std::string& actionName) const
+{
+    for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
+    {
+        if (currentMapping.actionName != actionName)
+        {
+            continue;
+        }
+
+        for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
+        {
+            auto foundKey = keyStates.find(currentKey);
+            if (foundKey != keyStates.end() && foundKey->second)
+            {
+                return true;
+            }
+        }
     }
 
     return false;
 }
 
-void InputManager::bindAction(const std::string& actionName, std::function<void()> callback)
+bool InputManager::isKeyPressed(sf::Keyboard::Key key) const
 {
-    actionCallbacks[actionName].push_back(std::move(callback));
+    auto foundKey = keyStates.find(key);
+
+    if (foundKey == keyStates.end())
+    {
+        return false;
+    }
+
+    return foundKey->second;
 }
 
-void InputManager::triggerAction(const std::string& actionName)
+bool InputManager::doesActionContainKey(const std::string& actionName, sf::Keyboard::Key key) const
 {
-    auto foundCallbacks = actionCallbacks.find(actionName);
-    if (foundCallbacks == actionCallbacks.end())
+    for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
     {
-        return;
+        if (currentMapping.actionName != actionName)
+        {
+            continue;
+        }
+
+        for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
+        {
+            if (currentKey == key)
+            {
+                return true;
+            }
+        }
     }
 
-    for (const auto& callback : foundCallbacks->second)
-    {
-        callback();
-    }
+    return false;
 }

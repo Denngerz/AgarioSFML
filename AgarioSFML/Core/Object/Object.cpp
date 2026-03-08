@@ -1,10 +1,11 @@
 ﻿#include "Object.h"
 #include "../GameLoop/GameLoop.h"
 
-Object::Object(std::shared_ptr<ObjectFactory> objFactory)
+Object::Object(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input)
     : isTickable(true),
       isActive(true),
-      objectFactory(objFactory)
+      objectFactory(objFactory),
+      inputManager(input)
 {
 }
 
@@ -40,6 +41,16 @@ void Object::checkCollisionWithObject(std::shared_ptr<Object>& targetObject)
     {
         onOverlapBegin(targetObject);
     }
+}
+
+void Object::becomePossesed(std::shared_ptr<Controller> newController)
+{
+    currentController = newController;
+}
+
+void Object::becomeUnpossesed()
+{
+    currentController = nullptr;
 }
 
 void Object::onOverlapBegin(std::shared_ptr<Object>& targetCircleObject)

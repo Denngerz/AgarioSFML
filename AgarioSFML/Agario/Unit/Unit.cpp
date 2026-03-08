@@ -1,13 +1,13 @@
 ﻿#include "Unit.h"
-#include "../../Core/GameLoop/GameLoop.h"
-#include <SFML/Window/Event.hpp> 
 #include <random>
-
+#include "../../Core/GameLoop/GameLoop.h"
 #include "../../Core/Utils/HelperFunctions.h"
+#include "../../Core/Controller/Controller.h"
 
-Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
-    : CircleObject(objFactory, radius, circleColor, position),
+Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
+    : CircleObject(objFactory, input, radius, circleColor, position),
       speed(200),
+      lastDeltaTime(0),
       hasReachedTargetLocation(true)
 {
     isAIControlled = isAI;
@@ -17,48 +17,44 @@ void Unit::update(float deltaTime)
 {
     CircleObject::update(deltaTime);
 
+    lastDeltaTime = deltaTime;
+    
     if (isAIControlled)
     {
         tryChooseRandomTargetPos();
+        tryMoveToTargetPos(deltaTime);
     }
-    else
-    {
-        proccessCurrentInputEvent();
-    }
-
-    tryMoveToTargetPos(deltaTime);
 }
 
 void Unit::becomeEaten()
 {
+    if (currentController)
+    {
+        currentController->unpossessObject();
+    }
+    
     destroySelf();
+}
+
+void Unit::moveInDirection(sf::Vector2f dir)
+{
+    circleShape->move(dir * speed * lastDeltaTime);
+}
+
+void Unit::setIsAIControlled(bool isAI)
+{
+    isAIControlled = isAI;
+}
+
+void Unit::becomeUnpossesed()
+{
+    CircleObject::becomeUnpossesed();
 }
 
 void Unit::onOverlapBegin(std::shared_ptr<Object>& targetObject)
 {
     tryEatTargetObject(targetObject);
 }
-
-void Unit::proccessCurrentInputEvent()
-{
-    // auto event = currentGameLoop.lock()->getCurrentInput();
-    //
-    // if (const auto* mv = event.getIf<sf::Event::MouseMoved>())
-    // {
-    //     sf::Vector2i pixel = sf::Vector2i(mv->position.x, mv->position.y);
-    //     
-    //     std::weak_ptr<sf::RenderWindow> window = currentGameLoop.lock()->getWindow();
-    //     targetPos = window.lock()->mapPixelToCoords(pixel);
-    // }
-}
-
-uint8_t Unit::getRandomUInt8_t() const
-{
-    static std::mt19937 rng{std::random_device{}()};
-    int value = std::uniform_int_distribution<int>(0, 255)(rng);
-    return static_cast<uint8_t>(value);
-}
-
 
 void Unit::tryMoveToTargetPos(float deltaTime)
 {
@@ -82,23 +78,13 @@ void Unit::tryChooseRandomTargetPos()
     {
         return;
     }
-    
-    // std::weak_ptr<sf::RenderWindow> window = currentGameLoop.lock()->getWindow();
-    // sf::Vector2u mapSize = window.lock()->getSize();
 
     sf::Vector2u mapSize = sf::Vector2u(1400, 1200);
 
-    targetPos.x = getRandomIntInRange(0, mapSize.x);
-    targetPos.y = getRandomIntInRange(0, mapSize.y);
+    targetPos.x = HelperFunctions::getRandomIntInRange(0, mapSize.x);
+    targetPos.y = HelperFunctions::getRandomIntInRange(0, mapSize.y);
 
     hasReachedTargetLocation = false;
-}
-
-int Unit::getRandomIntInRange(int min, int max) const
-{
-    static std::mt19937 rng{std::random_device{}()};
-    int value = std::uniform_int_distribution<int>(min, max)(rng);
-    return value;
 }
 
 void Unit::tryEatTargetObject(std::shared_ptr<Object>& targetObject)

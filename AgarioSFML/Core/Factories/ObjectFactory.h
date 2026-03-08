@@ -23,8 +23,8 @@ public:
             return nullptr;
         }
 
-        auto object = std::make_shared<T>(shared_from_this(), std::forward<Args>(args)...);
-
+        auto object = std::make_shared<T>(shared_from_this(), gameLoop.lock()->getInputManager(), std::forward<Args>(args)...);
+        
         object->beginPlay();
         lockedGameLoop->addObject(std::static_pointer_cast<Object>(object));
 

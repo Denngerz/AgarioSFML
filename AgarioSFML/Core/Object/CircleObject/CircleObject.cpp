@@ -1,7 +1,7 @@
 ﻿#include "CircleObject.h"
 #include <SFML/Graphics/CircleShape.hpp>
 
-CircleObject::CircleObject(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color circleColor, sf::Vector2f position): Object(objFactory)
+CircleObject::CircleObject(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input, float radius, sf::Color circleColor, sf::Vector2f position): Object(objFactory, input)
 {
     circleRadius = radius;
     
@@ -24,6 +24,21 @@ void CircleObject::update(float deltaTime)
 float CircleObject::getCircleRadius()
 {
     return circleRadius;
+}
+
+void CircleObject::beginPlay()
+{
+    Object::beginPlay();
+}
+
+void CircleObject::becomePossesed(std::shared_ptr<Controller> newController)
+{
+    Object::becomePossesed(newController);
+}
+
+void CircleObject::becomeUnpossesed()
+{
+    Object::becomeUnpossesed();
 }
 
 void CircleObject::updateCircleRadius(float newRadius)

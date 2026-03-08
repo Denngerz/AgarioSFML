@@ -2,10 +2,13 @@
 #include <random>
 #include <SFML/Graphics.hpp>
 #include "Food/Food.h"
+#include "Controllers/PlayerController.h"
 #include "Unit/Unit.h"
+#include "../Core/Input/InputManager.h"
+#include "../Core/Utils/HelperFunctions.h"
 
-Game::Game(std::shared_ptr<ObjectFactory> objectFactory)
-    : Object(objectFactory),
+Game::Game(std::shared_ptr<ObjectFactory> objectFactory, std::shared_ptr<InputManager> input)
+    : Object(objectFactory, input),
       spawnTimer(0),
       foodSpawnInterval(0.5)
 {
@@ -35,13 +38,13 @@ void Game::update(float deltaTime)
     }
 }
 
-void Game::onOverlapBegin(std::shared_ptr<Object>& targetObject)
-{
-}
-
 void Game::generatePlayer()
 {
     player = spawnObjectOfClass<Unit>(40, sf::Color(0, 0, 255), sf::Vector2f(700, 600));
+
+    playerController = spawnObjectOfClass<PlayerController>();
+
+    playerController->possessObject(std::dynamic_pointer_cast<Object>(player));
 }
 
 void Game::generateEnemies()

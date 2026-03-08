@@ -116,7 +116,7 @@ public:
     
     std::shared_ptr<ObjectFactory> getFactory() const;
 
-    sf::Event& getCurrentInput();
+    std::shared_ptr<InputManager> getInputManager() const;
 
     void initialize();
 

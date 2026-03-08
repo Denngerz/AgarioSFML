@@ -2,6 +2,7 @@
 #include "../Core/GameLoop/GameLoop.h"
 #include "../Core/Object/Object.h"
 
+class PlayerController;
 class Unit;
 
 namespace sf
@@ -12,7 +13,7 @@ namespace sf
 class Game: public Object
 {
 public:
-    Game(std::shared_ptr<ObjectFactory> objectFactory);
+    Game(std::shared_ptr<ObjectFactory> objectFactory, std::shared_ptr<InputManager> input);
 
     const std::shared_ptr<sf::Shape>& getShapeBase() const override;
 
@@ -20,11 +21,10 @@ public:
 
     virtual void update(float deltaTime) override;
 
-protected:
-    void onOverlapBegin(std::shared_ptr<Object>& targetObject) override;
-
 private:
     std::shared_ptr<Unit> player;
+
+    std::shared_ptr<PlayerController> playerController;
 
     std::vector<std::shared_ptr<Unit>> enemies;
 
