@@ -1,5 +1,7 @@
 ﻿#include "Unit.h"
 #include <random>
+
+#include "../../Core/Components/CameraComponent.h"
 #include "../../Core/GameLoop/GameLoop.h"
 #include "../../Core/Utils/HelperFunctions.h"
 #include "../../Core/Controller/Controller.h"
@@ -11,6 +13,8 @@ Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color ci
       hasReachedTargetLocation(true)
 {
     isAIControlled = isAI;
+
+    cameraComponent = std::make_shared<CameraComponent>(sf::Vector2f(0.0f, 0.0f), 0.5f);
 }
 
 void Unit::update(float deltaTime)
@@ -40,6 +44,15 @@ float Unit::getRadius()
 sf::Vector2f Unit::getPosition()
 {
     return circleShape->getPosition();
+}
+
+std::shared_ptr<CameraComponent> Unit::getCameraComponent()
+{
+    if (isAIControlled)
+    {
+        return nullptr;
+    }
+    return cameraComponent;
 }
 
 void Unit::moveInDirection(sf::Vector2f dir)
@@ -105,6 +118,7 @@ void Unit::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
         {
             updateCircleRadius(targetRadius + circleRadius);
             interfacePtr->becomeEaten();
+            cameraComponent->setZoomValue(cameraComponent->getRealZoomValue() + targetRadius * 0.001f);  
         }
     }
 }

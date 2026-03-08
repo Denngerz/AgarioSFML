@@ -216,6 +216,7 @@
     <ClCompile Include="Agario\Controllers\PlayerController.cpp" />
     <ClCompile Include="Agario\Unit\CirclePawn.cpp" />
     <ClCompile Include="Agario\Unit\Unit.cpp" />
+    <ClCompile Include="Core\Components\CameraComponent.cpp" />
     <ClCompile Include="Core\Controller\Controller.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
@@ -310,10 +311,12 @@
     <ClInclude Include="Agario\Controllers\PlayerController.h" />
     <ClInclude Include="Agario\Unit\CirclePawn.h" />
     <ClInclude Include="Agario\Unit\Unit.h" />
+    <ClInclude Include="Core\Components\CameraComponent.h" />
     <ClInclude Include="Core\Controller\Controller.h" />
     <ClInclude Include="Core\Factories\ObjectFactory.h" />
     <ClInclude Include="Core\GameLoop\GameLoop.h" />
     <ClInclude Include="Core\Input\InputManager.h" />
+    <ClInclude Include="Core\Interfaces\ICameraProvider.h" />
     <ClInclude Include="Core\Interfaces\IDrawable.h" />
     <ClInclude Include="Core\Interfaces\IUpdatable.h" />
     <ClInclude Include="Core\Object\Object.h" />

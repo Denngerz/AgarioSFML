@@ -4,7 +4,7 @@
 
 int main()
 {
-    auto gameLoop = std::make_shared<GameLoop>(1400, 1200, "AgarioSFML");
+    auto gameLoop = std::make_shared<GameLoop>(1920, 1080, "AgarioSFML");
     gameLoop->initialize();
 
     auto agarioGame = gameLoop->getFactory()->createObject<Game>();

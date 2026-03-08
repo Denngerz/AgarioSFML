@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 
+class ICameraProvider;
+class CameraComponent;
 class InputManager;
 class ObjectFactory;
 class Time;
@@ -129,6 +131,10 @@ private:
 
     std::shared_ptr<sf::RenderWindow> window;
 
+    std::shared_ptr<CameraComponent> currentCamera;
+
+    std::shared_ptr<sf::View> activeView;
+
     std::shared_ptr<ObjectFactory> objectFactory;
 
     std::shared_ptr<InputManager> inputManager;
@@ -152,4 +158,6 @@ private:
     void updateObjectsCollision();
 
     void cleanupInactiveObjects();
+
+    void updateActiveCamera(std::shared_ptr<ICameraProvider> newCam);
 };

@@ -1,10 +1,12 @@
 ﻿#include "GameLoop.h"
-
 #include <optional>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include "../Components/CameraComponent.h"
 #include "../Input/InputManager.h"
 #include "../Object/Object.h"
+#include "../Object/Pawn/Pawn.h"
 #include "../Time/Time.h"
+#include "../Interfaces/ICameraProvider.h"
 
 GameLoop::GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::string windowTitle)
     : currentInputEvent(sf::Event::KeyPressed{})
@@ -75,14 +77,37 @@ bool GameLoop::isEndGame() const
 void GameLoop::updateWindow() const
 {
     window->clear(sf::Color::White);
+    
+    if (currentCamera && activeView)
+    {
+        currentCamera->updatePosition();
+        activeView->setCenter(currentCamera->getCurrentPosition());
+
+        if (currentCamera->getShouldUpdateView())
+        {
+            activeView->zoom(currentCamera->getZoomValue());
+            currentCamera->setShouldUpdateView(false);
+        }
+        
+        window->setView(*activeView);
+    }
 
     for (const auto& shape : drawableShapes)
     {
         if (shape)
+        {
             window->draw(*shape);
+        }
     }
 
     window->display();
+}
+
+void GameLoop::updateActiveCamera(std::shared_ptr<ICameraProvider> newCam)
+{
+    activeView = std::make_shared<sf::View>(currentCamera->getCurrentPosition(), sf::Vector2f(1920, 1080));
+    
+    window->setView(*activeView.get());
 }
 
 void GameLoop::updateObjects()
@@ -162,6 +187,18 @@ void GameLoop::addObject(const std::shared_ptr<Object>& obj)
     if (obj->getIsTickable())
     {
         tickableObjects.add(obj);
+    }
+    
+    if (auto cam = std::dynamic_pointer_cast<ICameraProvider>(obj))
+    if (auto cam = std::dynamic_pointer_cast<ICameraProvider>(obj))
+    {
+        if (cam->getCameraComponent())
+        {
+            currentCamera = cam->getCameraComponent();
+            currentCamera->setOwnerPawn(std::dynamic_pointer_cast<Pawn>(obj));
+            
+            updateActiveCamera(cam);
+        }
     }
 }
 
