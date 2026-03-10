@@ -41,6 +41,26 @@ void Game::update(float deltaTime)
     }
 }
 
+std::shared_ptr<Unit> Game::getRandomUnit(std::shared_ptr<Unit> exeptionUnit) const
+{
+    std::vector<std::shared_ptr<Unit>> aliveUnits;
+
+    for (const auto& unit : units)
+    {
+        if (unit && unit->getIsActive() && unit != exeptionUnit)
+        {
+            aliveUnits.emplace_back(unit);
+        }
+    }
+
+    if (aliveUnits.empty())
+    {
+        return nullptr;
+    }
+
+    return aliveUnits[HelperFunctions::getRandomIntInRange(0, static_cast<int>(aliveUnits.size()) - 1)];
+}
+
 void Game::generateLevel()
 {
     walls.emplace_back(spawnObjectOfClass<Wall>(sf::Vector2f(40, 4000), sf::Color(0, 0, 0), currentWorld->sfmlToWorld(sf::Vector2f(2000, 0))));
@@ -53,8 +73,11 @@ void Game::generatePlayer()
 {
     player = spawnObjectOfClass<Unit>(40, sf::Color(0, 0, 255), getRandomLocation());
 
+    units.emplace_back(player);
+
     playerController = spawnObjectOfClass<PlayerController>();
 
+    playerController->setGamemode(std::static_pointer_cast<Game>(shared_from_this()));
     playerController->possessPawn(std::dynamic_pointer_cast<Pawn>(player));
 }
 
@@ -63,7 +86,7 @@ void Game::generateEnemies()
     for (int i = 0; i < 4; ++i)
     {
         std::shared_ptr<Unit> enemy = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), getRandomLocation(), true);
-        enemies.emplace_back(enemy);
+        units.emplace_back(enemy);
     }
 }
 

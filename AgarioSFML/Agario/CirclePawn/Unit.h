@@ -27,6 +27,10 @@ public:
     virtual std::shared_ptr<CameraComponent> getCameraComponent() override;
 
     virtual CollisionType getCollisionResponse() const override;
+
+    virtual void becomePossesed(std::shared_ptr<Controller> newController) override;
+
+    virtual void becomeUnpossesed() override;
     
     void moveInDirection(sf::Vector2f dir);
 

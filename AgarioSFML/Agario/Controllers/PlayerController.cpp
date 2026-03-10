@@ -65,6 +65,22 @@ void PlayerController::beginPlay()
         }
         controlledUnit->moveInDirection(sf::Vector2f(1, 0));
     });
+
+    inputManager->bindAction("Swap", InputTriggerType::Pressed, [this]()
+   {
+       if (controlledUnit)
+       {
+           controlledUnit->becomeUnpossesed();
+           controlledUnit->setIsAIControlled(true);
+           controlledUnit = nullptr;
+       }
+        
+       auto newUnit = gamemode.lock()->getRandomUnit();
+       if (newUnit)
+       {
+           possessPawn(newUnit);
+       }
+   });
 }
 
 void PlayerController::setGamemode(std::shared_ptr<Game> newGamemode)

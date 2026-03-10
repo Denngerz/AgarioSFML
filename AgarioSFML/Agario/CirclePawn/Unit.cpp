@@ -34,7 +34,6 @@ void Unit::update(float deltaTime)
 
 void Unit::becomeEaten()
 {
-    
     destroySelf();
 }
 
@@ -60,6 +59,20 @@ std::shared_ptr<CameraComponent> Unit::getCameraComponent()
 CollisionType Unit::getCollisionResponse() const
 {
     return CollisionType::Overlap;
+}
+
+void Unit::becomePossesed(std::shared_ptr<Controller> newController)
+{
+    CirclePawn::becomePossesed(newController);
+
+    isAIControlled = false;
+}
+
+void Unit::becomeUnpossesed()
+{
+    CirclePawn::becomeUnpossesed();
+
+    isAIControlled = true;
 }
 
 void Unit::moveInDirection(sf::Vector2f dir)

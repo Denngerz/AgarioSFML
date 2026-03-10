@@ -64,8 +64,3 @@ void Object::setCurrentWorld(std::shared_ptr<World> inWorld)
 {
     currentWorld = inWorld;
 }
-
-std::shared_ptr<World> Object::getWorld() const
-{
-    return currentWorld;
-}

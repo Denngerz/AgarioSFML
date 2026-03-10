@@ -35,8 +35,6 @@ public:
 
     void setCurrentWorld(std::shared_ptr<World> inWorld);
 
-    std::shared_ptr<World> getWorld() const;
-
     virtual void checkCollisionWithObject(std::shared_ptr<Object>& targetObject);
 
 protected:
