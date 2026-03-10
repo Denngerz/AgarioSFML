@@ -10,6 +10,8 @@ Food::Food(std::shared_ptr<ObjectFactory> objFactory,float radius, sf::Color cir
     circleShape->setOrigin(sf::Vector2f(radius, radius));
     circleShape->setFillColor(circleColor);
     circleShape->setPosition(position);
+
+    collisionResponse = CollisionType::Overlap;
 }
 
 void Food::becomeEaten()
@@ -25,6 +27,11 @@ float Food::getRadius()
 sf::Vector2f Food::getPosition()
 {
     return circleShape->getPosition();
+}
+
+CollisionType Food::getCollisionResponse() const
+{
+    return collisionResponse;
 }
 
 const std::shared_ptr<sf::Shape>& Food::getShapeBase() const

@@ -2,6 +2,7 @@
 #include "../Core/GameLoop/GameLoop.h"
 #include "../Core/Object/Object.h"
 
+class Wall;
 class PlayerController;
 class Unit;
 
@@ -28,9 +29,15 @@ private:
 
     std::vector<std::shared_ptr<Unit>> enemies;
 
+    std::vector<std::shared_ptr<Wall>> walls;
+
+    sf::Vector2f mapSize;
+
     float spawnTimer;
 
     float foodSpawnInterval;
+
+    void generateLevel();
     
     void generatePlayer();
 

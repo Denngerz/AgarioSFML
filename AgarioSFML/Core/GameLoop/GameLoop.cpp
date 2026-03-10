@@ -7,6 +7,7 @@
 #include "../Object/Pawn/Pawn.h"
 #include "../Time/Time.h"
 #include "../Interfaces/ICameraProvider.h"
+#include "../World/World.h"
 
 GameLoop::GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::string windowTitle)
     : currentInputEvent(sf::Event::KeyPressed{})
@@ -26,6 +27,8 @@ GameLoop::GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::str
 void GameLoop::initialize()
 {
     objectFactory = std::make_shared<ObjectFactory>(shared_from_this());
+    
+    world = objectFactory->createObject<World>();
 }
 
 void GameLoop::runLoop()
@@ -188,15 +191,19 @@ void GameLoop::addObject(const std::shared_ptr<Object>& obj)
     {
         tickableObjects.add(obj);
     }
-    
-    if (auto cam = std::dynamic_pointer_cast<ICameraProvider>(obj))
+
+    if (world && obj != std::static_pointer_cast<Object>(world))
+    {
+        world->registerObject(obj);
+    }
+
     if (auto cam = std::dynamic_pointer_cast<ICameraProvider>(obj))
     {
         if (cam->getCameraComponent())
         {
             currentCamera = cam->getCameraComponent();
             currentCamera->setOwnerPawn(std::dynamic_pointer_cast<Pawn>(obj));
-            
+
             updateActiveCamera(cam);
         }
     }
@@ -226,4 +233,9 @@ std::shared_ptr<ObjectFactory> GameLoop::getFactory() const
 std::shared_ptr<InputManager> GameLoop::getInputManager() const
 {
     return inputManager;
+}
+
+std::shared_ptr<World> GameLoop::getWorld() const
+{
+    return world;
 }

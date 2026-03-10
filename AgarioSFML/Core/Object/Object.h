@@ -6,6 +6,7 @@
 #include "../Interfaces/IUpdatable.h"
 
 class Controller;
+class World;
 
 namespace sf
 {
@@ -32,13 +33,19 @@ public:
 
     bool getIsActive() const;
 
+    void setCurrentWorld(std::shared_ptr<World> inWorld);
+
+    std::shared_ptr<World> getWorld() const;
+
     virtual void checkCollisionWithObject(std::shared_ptr<Object>& targetObject);
 
 protected:
     bool isActive;
 
     bool isTickable;
-
+    
+    std::shared_ptr<World> currentWorld;
+    
     virtual void onOverlapBegin(std::shared_ptr<Object>& targetCircleObject);
 
     template<class T, class... Args>

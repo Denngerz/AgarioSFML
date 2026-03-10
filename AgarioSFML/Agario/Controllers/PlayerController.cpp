@@ -1,7 +1,7 @@
 ﻿#include "PlayerController.h"
 
 #include "../Game.h"
-#include "../Unit/Unit.h"
+#include "../CirclePawn/Unit.h"
 #include "../../Core/Input/InputManager.h"
 
 PlayerController::PlayerController(std::shared_ptr<ObjectFactory> objFactory, std::shared_ptr<InputManager> input): Controller(objFactory, input)

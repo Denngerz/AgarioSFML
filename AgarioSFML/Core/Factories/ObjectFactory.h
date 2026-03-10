@@ -3,7 +3,8 @@
 #include "../GameLoop/GameLoop.h"
 
 class Object;
-class Controller; 
+class Controller;
+class World;
 
 class ObjectFactory : public std::enable_shared_from_this<ObjectFactory>
 {

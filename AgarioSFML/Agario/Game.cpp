@@ -3,14 +3,17 @@
 #include <SFML/Graphics.hpp>
 #include "Food/Food.h"
 #include "Controllers/PlayerController.h"
-#include "Unit/Unit.h"
+#include "CirclePawn/Unit.h"
+#include "LevelProps/Wall.h"
 #include "../Core/Utils/HelperFunctions.h"
+#include "../Core/World/World.h"
 
 Game::Game(std::shared_ptr<ObjectFactory> objectFactory)
     : Object(objectFactory),
       spawnTimer(0),
       foodSpawnInterval(0.5)
 {
+    mapSize = sf::Vector2f(2000.0f, 2000.0f);
 }
 
 const std::shared_ptr<sf::Shape>& Game::getShapeBase() const
@@ -21,7 +24,8 @@ const std::shared_ptr<sf::Shape>& Game::getShapeBase() const
 void Game::beginPlay()
 {
     Object::beginPlay();
-    
+
+    generateLevel();
     generatePlayer();
     generateEnemies();
 }
@@ -37,9 +41,17 @@ void Game::update(float deltaTime)
     }
 }
 
+void Game::generateLevel()
+{
+    walls.emplace_back(spawnObjectOfClass<Wall>(sf::Vector2f(40, 4000), sf::Color(0, 0, 0), currentWorld->sfmlToWorld(sf::Vector2f(2000, 0))));
+    walls.emplace_back(spawnObjectOfClass<Wall>(sf::Vector2f(4000, 40), sf::Color(0, 0, 0), currentWorld->sfmlToWorld(sf::Vector2f(0, -2000))));
+    walls.emplace_back(spawnObjectOfClass<Wall>(sf::Vector2f(40, 4000), sf::Color(0, 0, 0), currentWorld->sfmlToWorld(sf::Vector2f(-2000, 0))));
+    walls.emplace_back(spawnObjectOfClass<Wall>(sf::Vector2f(4000, 40), sf::Color(0, 0, 0), currentWorld->sfmlToWorld(sf::Vector2f(0, 2000))));
+}
+
 void Game::generatePlayer()
 {
-    player = spawnObjectOfClass<Unit>(40, sf::Color(0, 0, 255), sf::Vector2f(700, 600));
+    player = spawnObjectOfClass<Unit>(40, sf::Color(0, 0, 255), getRandomLocation());
 
     playerController = spawnObjectOfClass<PlayerController>();
 
@@ -50,7 +62,7 @@ void Game::generateEnemies()
 {
     for (int i = 0; i < 4; ++i)
     {
-        std::shared_ptr<Unit> enemy = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), sf::Vector2f(700, 600), true);
+        std::shared_ptr<Unit> enemy = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), getRandomLocation(), true);
         enemies.emplace_back(enemy);
     }
 }
@@ -63,13 +75,16 @@ void Game::spawnFood()
 sf::Vector2f Game::getRandomLocation()
 {
     static std::mt19937 randomEngine{ std::random_device{}() };
+
+    float maxX = mapSize.x - 100;
+    float maxY = mapSize.y - 100;
     
-    sf::Vector2u mapSize = sf::Vector2u(1400, 1200);
+    std::uniform_real_distribution<float> xDistribution(-maxX, maxX);
+    std::uniform_real_distribution<float> yDistribution(-maxY, maxY);
 
-    std::uniform_real_distribution<float> xDistribution(0, mapSize.x);
-    std::uniform_real_distribution<float> yDistribution(0, mapSize.y);
+    sf::Vector2f location = currentWorld->sfmlToWorld(sf::Vector2f(xDistribution(randomEngine), yDistribution(randomEngine)));
 
-    return sf::Vector2f(xDistribution(randomEngine), yDistribution(randomEngine));
+    return location;
 }
 
 sf::Color Game::getRandomColor()

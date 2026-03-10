@@ -12,6 +12,7 @@ class ObjectFactory;
 class Time;
 class Object;
 class Factory;
+class World;
 
 template<class T>
 class IterratableSet
@@ -120,6 +121,8 @@ public:
 
     std::shared_ptr<InputManager> getInputManager() const;
 
+    std::shared_ptr<World> getWorld() const;
+
     void initialize();
 
 private:
@@ -138,6 +141,8 @@ private:
     std::shared_ptr<ObjectFactory> objectFactory;
 
     std::shared_ptr<InputManager> inputManager;
+
+    std::shared_ptr<World> world;
     
     sf::Event currentInputEvent;
 
