@@ -1,6 +1,5 @@
 #include "World.h"
 
-#include <algorithm>
 
 World::World(std::shared_ptr<ObjectFactory> objFactory)
     : Object(objFactory)
@@ -43,12 +42,19 @@ void World::registerObject(const std::shared_ptr<Object>& obj)
 
 void World::cleanupDestroyedObjects()
 {
-    spawnedObjects.erase(
-        std::remove_if(spawnedObjects.begin(), spawnedObjects.end(),
-            [](const std::weak_ptr<Object>& weakObj)
-            {
-                auto obj = weakObj.lock();
-                return !obj || !obj->getIsActive();
-            }),
-        spawnedObjects.end());
+    size_t currentIndex = 0;
+
+    while (currentIndex < spawnedObjects.size())
+    {
+        auto obj = spawnedObjects[currentIndex].lock();
+        if (!obj || !obj->getIsActive())
+        {
+            spawnedObjects[currentIndex] = spawnedObjects.back();
+            spawnedObjects.pop_back();
+        }
+        else
+        {
+            ++currentIndex;
+        }
+    }
 }
