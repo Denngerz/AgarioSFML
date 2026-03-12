@@ -7,4 +7,6 @@ class ICameraProvider
 {
 public:
     virtual std::shared_ptr<CameraComponent> getCameraComponent() = 0;
+
+    virtual bool getIsMainProvider() const = 0;
 };

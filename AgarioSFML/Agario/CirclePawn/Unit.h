@@ -31,10 +31,16 @@ public:
     virtual void becomePossesed(std::shared_ptr<Controller> newController) override;
 
     virtual void becomeUnpossesed() override;
+
+    virtual bool getIsMainProvider() const override;
     
     void moveInDirection(sf::Vector2f dir);
 
     void setIsAIControlled(bool isAI);
+
+    void sprint();
+
+    void stopSprint();
 
 protected:
     virtual void onOverlapBegin(std::shared_ptr<Object>& targetObject) override;
@@ -42,11 +48,15 @@ protected:
 private:
     float speed;
 
+    float speedBoost;
+
     sf::Vector2f targetPos;
 
     float lastDeltaTime;
 
     bool isAIControlled;
+
+    bool isSprinting;
 
     bool hasReachedTargetLocation;
 

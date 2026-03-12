@@ -26,8 +26,8 @@ void Game::beginPlay()
     Object::beginPlay();
 
     generateLevel();
+    generateUnits();
     generatePlayer();
-    generateEnemies();
 }
 
 void Game::update(float deltaTime)
@@ -71,22 +71,17 @@ void Game::generateLevel()
 
 void Game::generatePlayer()
 {
-    player = spawnObjectOfClass<Unit>(40, sf::Color(0, 0, 255), getRandomLocation());
-
-    units.emplace_back(player);
-
     playerController = spawnObjectOfClass<PlayerController>();
-
     playerController->setGamemode(std::static_pointer_cast<Game>(shared_from_this()));
-    playerController->possessPawn(std::dynamic_pointer_cast<Pawn>(player));
+    playerController->possessPawn(std::dynamic_pointer_cast<Pawn>(getRandomUnit()));
 }
 
-void Game::generateEnemies()
+void Game::generateUnits()
 {
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 5; ++i)
     {
-        std::shared_ptr<Unit> enemy = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), getRandomLocation(), true);
-        units.emplace_back(enemy);
+        std::shared_ptr<Unit> unit = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), getRandomLocation(), true);
+        units.emplace_back(unit);
     }
 }
 

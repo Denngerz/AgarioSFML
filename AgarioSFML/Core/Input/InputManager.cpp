@@ -9,7 +9,8 @@ InputManager::InputManager()
                 { "MoveDown",  { sf::Keyboard::Key::S } },
                 { "MoveLeft",  { sf::Keyboard::Key::A } },
                 { "MoveRight", { sf::Keyboard::Key::D } },
-                { "Swap",      { sf::Keyboard::Key::F } }
+                { "Swap",      { sf::Keyboard::Key::F } },
+                { "Sprint",      { sf::Keyboard::Key::LShift } }
             }
     };
 

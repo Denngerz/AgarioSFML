@@ -43,7 +43,7 @@ private:
     
     void generatePlayer();
 
-    void generateEnemies();
+    void generateUnits();
 
     void spawnFood();
 

@@ -9,6 +9,7 @@
 Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color circleColor,sf::Vector2f position, bool isAI)
     : CirclePawn(objFactory, radius, circleColor, position),
       speed(200),
+      speedBoost(100),
       lastDeltaTime(0),
       hasReachedTargetLocation(true)
 {
@@ -16,7 +17,7 @@ Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color ci
 
     collisionType = CollisionType::Overlap;
 
-    cameraComponent = std::make_shared<CameraComponent>(sf::Vector2f(0.0f, 0.0f), 0.5f);
+    cameraComponent = std::make_shared<CameraComponent>(sf::Vector2f(0.0f, 0.0f), 1.0f);
 }
 
 void Unit::update(float deltaTime)
@@ -49,10 +50,6 @@ sf::Vector2f Unit::getPosition()
 
 std::shared_ptr<CameraComponent> Unit::getCameraComponent()
 {
-    if (isAIControlled)
-    {
-        return nullptr;
-    }
     return cameraComponent;
 }
 
@@ -66,6 +63,8 @@ void Unit::becomePossesed(std::shared_ptr<Controller> newController)
     CirclePawn::becomePossesed(newController);
 
     isAIControlled = false;
+
+    circleShape->setFillColor(sf::Color::Blue);
 }
 
 void Unit::becomeUnpossesed()
@@ -73,6 +72,18 @@ void Unit::becomeUnpossesed()
     CirclePawn::becomeUnpossesed();
 
     isAIControlled = true;
+
+    circleShape->setFillColor(sf::Color::Red);
+
+    if (isSprinting)
+    {
+        stopSprint();
+    }
+}
+
+bool Unit::getIsMainProvider() const
+{
+    return !isAIControlled;
 }
 
 void Unit::moveInDirection(sf::Vector2f dir)
@@ -83,6 +94,18 @@ void Unit::moveInDirection(sf::Vector2f dir)
 void Unit::setIsAIControlled(bool isAI)
 {
     isAIControlled = isAI;
+}
+
+void Unit::sprint()
+{
+    speed += speedBoost;
+    isSprinting = true;
+}
+
+void Unit::stopSprint()
+{
+    speed -= speedBoost;
+    isSprinting = false;
 }
 
 void Unit::onOverlapBegin(std::shared_ptr<Object>& targetObject)
@@ -153,9 +176,13 @@ void Unit::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
 
         if (delta.length() < circleRadius && circleRadius > targetRadius)
         {
-            updateCircleRadius(targetRadius + circleRadius);
+            float additiveRadius = targetRadius * 0.6f;
+            
+            updateCircleRadius(additiveRadius + circleRadius);
+            
             asEatablePtr->becomeEaten();
-            cameraComponent->setZoomValue(cameraComponent->getRealZoomValue() + targetRadius * 0.002f);
+            
+            cameraComponent->setZoomValue(cameraComponent->getRealZoomValue() + additiveRadius * 0.002f);
 
             if (isAIControlled)
             {

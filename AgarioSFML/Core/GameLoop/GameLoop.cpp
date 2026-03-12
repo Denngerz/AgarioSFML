@@ -1,4 +1,6 @@
 ﻿#include "GameLoop.h"
+
+#include <iostream>
 #include <optional>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "../Components/CameraComponent.h"
@@ -29,6 +31,8 @@ void GameLoop::initialize()
     objectFactory = std::make_shared<ObjectFactory>(shared_from_this());
     
     world = objectFactory->createObject<World>();
+
+    activeView = std::make_shared<sf::View>(sf::Vector2f(0,0), sf::Vector2f(1920,1080));
 }
 
 void GameLoop::runLoop()
@@ -63,6 +67,7 @@ void GameLoop::logic()
 {
     time->update();
     updateObjects();
+    refreshActiveCamera();
     updateObjectsCollision();
     cleanupInactiveObjects();
 }
@@ -106,11 +111,33 @@ void GameLoop::updateWindow() const
     window->display();
 }
 
-void GameLoop::updateActiveCamera(std::shared_ptr<ICameraProvider> newCam)
+void GameLoop::refreshActiveCamera()
 {
-    activeView = std::make_shared<sf::View>(currentCamera->getCurrentPosition(), sf::Vector2f(1920, 1080));
-    
-    window->setView(*activeView.get());
+    for (const auto& obj : cameraProviders)
+    {
+        if (!obj)
+        {
+            continue;
+        }
+
+        auto provider = std::dynamic_pointer_cast<ICameraProvider>(obj);
+        if (!provider || !provider->getIsMainProvider())
+        {
+            continue;
+        }
+
+        auto camComp = provider->getCameraComponent();
+        if (!camComp || currentCamera == camComp)
+        {
+            continue;
+        }
+        
+        currentCamera = camComp;
+        currentCamera->setOwnerPawn(std::dynamic_pointer_cast<Pawn>(obj));
+        activeView = std::make_shared<sf::View>(currentCamera->getCurrentPosition(), sf::Vector2f(1920,1080));
+        window->setView(*activeView);
+        return;
+    }
 }
 
 void GameLoop::updateObjects()
@@ -197,15 +224,10 @@ void GameLoop::addObject(const std::shared_ptr<Object>& obj)
         world->registerObject(obj);
     }
 
-    if (auto cam = std::dynamic_pointer_cast<ICameraProvider>(obj))
+    if (std::dynamic_pointer_cast<ICameraProvider>(obj))
     {
-        if (cam->getCameraComponent())
-        {
-            currentCamera = cam->getCameraComponent();
-            currentCamera->setOwnerPawn(std::dynamic_pointer_cast<Pawn>(obj));
-
-            updateActiveCamera(cam);
-        }
+        cameraProviders.add(obj);
+        refreshActiveCamera();
     }
 }
 
@@ -218,6 +240,12 @@ void GameLoop::removeObject(const std::shared_ptr<Object>& obj)
 
     drawableShapes.remove(obj->getShapeBase());
     tickableObjects.remove(obj);
+
+    if (std::dynamic_pointer_cast<ICameraProvider>(obj))
+    {
+        cameraProviders.remove(obj);
+        refreshActiveCamera();
+    }
 }
 
 std::weak_ptr<sf::RenderWindow> GameLoop::getWindow() const

@@ -129,8 +129,10 @@ private:
     std::shared_ptr<Time> time;
     
     IterratableSet<sf::Shape> drawableShapes;
-    
+
     IterratableSet<Object> tickableObjects;
+
+    IterratableSet<Object> cameraProviders;
 
     std::shared_ptr<sf::RenderWindow> window;
 
@@ -164,5 +166,5 @@ private:
 
     void cleanupInactiveObjects();
 
-    void updateActiveCamera(std::shared_ptr<ICameraProvider> newCam);
+    void refreshActiveCamera();
 };

@@ -81,6 +81,24 @@ void PlayerController::beginPlay()
            possessPawn(newUnit);
        }
    });
+
+    inputManager->bindAction("Sprint", InputTriggerType::Pressed, [this]()
+    {
+        if (!controlledUnit)
+        {
+            return;
+        }
+        controlledUnit->sprint();
+    });
+
+    inputManager->bindAction("Sprint", InputTriggerType::Released, [this]()
+    {
+        if (!controlledUnit)
+        {
+            return;
+        }
+        controlledUnit->stopSprint();
+    });
 }
 
 void PlayerController::setGamemode(std::shared_ptr<Game> newGamemode)
