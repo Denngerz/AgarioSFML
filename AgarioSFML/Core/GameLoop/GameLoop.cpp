@@ -1,6 +1,5 @@
 ﻿#include "GameLoop.h"
 
-#include <iostream>
 #include <optional>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "../Components/CameraComponent.h"
@@ -11,14 +10,15 @@
 #include "../Interfaces/ICameraProvider.h"
 #include "../World/World.h"
 
-GameLoop::GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::string windowTitle)
-    : currentInputEvent(sf::Event::KeyPressed{})
+GameLoop::GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::string windowTitle, bool showGrid)
+    : showGrid(showGrid), currentInputEvent(sf::Event::KeyPressed{})
 {
     time = std::make_shared<Time>();
     
     window = std::make_shared<sf::RenderWindow>(
         sf::VideoMode({ windowWidth, windowHeight }),
-        windowTitle
+        windowTitle,
+        sf::Style::Titlebar | sf::Style::Close
     );
 
     window->setFramerateLimit(60);
@@ -29,10 +29,15 @@ GameLoop::GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::str
 void GameLoop::initialize()
 {
     objectFactory = std::make_shared<ObjectFactory>(shared_from_this());
-    
+
     world = objectFactory->createObject<World>();
 
     activeView = std::make_shared<sf::View>(sf::Vector2f(0,0), sf::Vector2f(1920,1080));
+
+    if (showGrid)
+    {
+        buildGrid();
+    }
 }
 
 void GameLoop::runLoop()
@@ -98,6 +103,11 @@ void GameLoop::updateWindow() const
         }
         
         window->setView(*activeView);
+    }
+
+    if (showGrid)
+    {
+        window->draw(gridLines);
     }
 
     for (const auto& shape : drawableShapes)
@@ -266,4 +276,25 @@ std::shared_ptr<InputManager> GameLoop::getInputManager() const
 std::shared_ptr<World> GameLoop::getWorld() const
 {
     return world;
+}
+
+void GameLoop::buildGrid()
+{
+    const float mapExtent = 2000.0f;
+    const float cellSize = 100.0f;
+    const sf::Color gridColor(100, 100, 100);
+
+    gridLines = sf::VertexArray(sf::PrimitiveType::Lines);
+
+    for (float x = -mapExtent; x <= mapExtent; x += cellSize)
+    {
+        gridLines.append(sf::Vertex{sf::Vector2f{x, -mapExtent}, gridColor});
+        gridLines.append(sf::Vertex{sf::Vector2f{x, mapExtent}, gridColor});
+    }
+
+    for (float y = -mapExtent; y <= mapExtent; y += cellSize)
+    {
+        gridLines.append(sf::Vertex{sf::Vector2f{-mapExtent, y}, gridColor});
+        gridLines.append(sf::Vertex{sf::Vector2f{mapExtent, y}, gridColor});
+    }
 }

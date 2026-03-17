@@ -25,7 +25,7 @@ void Game::beginPlay()
 {
     Object::beginPlay();
 
-    generateLevel();
+    generateWalls();
     generateUnits();
     generatePlayer();
 }
@@ -61,7 +61,7 @@ std::shared_ptr<Unit> Game::getRandomUnit(std::shared_ptr<Unit> exeptionUnit) co
     return aliveUnits[HelperFunctions::getRandomIntInRange(0, static_cast<int>(aliveUnits.size()) - 1)];
 }
 
-void Game::generateLevel()
+void Game::generateWalls()
 {
     walls.emplace_back(spawnObjectOfClass<Wall>(sf::Vector2f(40, 4000), sf::Color(0, 0, 0), currentWorld->sfmlToWorld(sf::Vector2f(2000, 0))));
     walls.emplace_back(spawnObjectOfClass<Wall>(sf::Vector2f(4000, 40), sf::Color(0, 0, 0), currentWorld->sfmlToWorld(sf::Vector2f(0, -2000))));

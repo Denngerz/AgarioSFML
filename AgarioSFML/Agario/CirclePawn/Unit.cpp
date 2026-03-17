@@ -1,6 +1,6 @@
 ﻿#include "Unit.h"
 #include <random>
-
+#include <corecrt_math_defines.h>
 #include "../../Core/Components/CameraComponent.h"
 #include "../../Core/GameLoop/GameLoop.h"
 #include "../../Core/Utils/HelperFunctions.h"
@@ -38,9 +38,9 @@ void Unit::becomeEaten()
     destroySelf();
 }
 
-float Unit::getRadius()
+float Unit::getArea()
 {
-    return circleRadius;
+    return M_PI * pow(circleRadius, 2);
 }
 
 sf::Vector2f Unit::getPosition()
@@ -172,17 +172,18 @@ void Unit::tryEatTargetObject(std::shared_ptr<Object>& targetObject)
 
         sf::Vector2f delta = secondCenter - firstCenter;
 
-        float targetRadius = asEatablePtr->getRadius();
+        float targetArea = asEatablePtr->getArea();
 
-        if (delta.length() < circleRadius && circleRadius > targetRadius)
+        if (delta.length() < circleRadius && getArea() > targetArea)
         {
-            float additiveRadius = targetRadius * 0.6f;
-            
-            updateCircleRadius(additiveRadius + circleRadius);
-            
+            float newRadius = std::sqrt((getArea() + targetArea) / M_PI);
+            float radiusDiff = newRadius - circleRadius;
+
+            updateCircleRadius(newRadius);
+
             asEatablePtr->becomeEaten();
-            
-            cameraComponent->setZoomValue(cameraComponent->getRealZoomValue() + additiveRadius * 0.002f);
+
+            cameraComponent->setZoomValue(cameraComponent->getRealZoomValue() + radiusDiff * 0.002f);
 
             if (isAIControlled)
             {

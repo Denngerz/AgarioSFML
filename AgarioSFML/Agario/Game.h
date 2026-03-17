@@ -39,7 +39,7 @@ private:
 
     float foodSpawnInterval;
 
-    void generateLevel();
+    void generateWalls();
     
     void generatePlayer();
 

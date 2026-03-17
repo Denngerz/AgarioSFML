@@ -1,4 +1,5 @@
 ﻿#include "Food.h"
+#include <corecrt_math_defines.h>
 
 Food::Food(std::shared_ptr<ObjectFactory> objFactory,float radius, sf::Color circleColor, sf::Vector2f position)
     :Object(objFactory),
@@ -19,9 +20,9 @@ void Food::becomeEaten()
     destroySelf();
 }
 
-float Food::getRadius()
+float Food::getArea()
 {
-    return circleRadius;
+    return M_PI * pow(circleRadius, 2);
 }
 
 sf::Vector2f Food::getPosition()

@@ -107,16 +107,16 @@ class GameLoop : public std::enable_shared_from_this<GameLoop>
 public:
     virtual ~GameLoop() = default;
 
-    GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::string windowTitle);
+    GameLoop(unsigned int windowWidth, unsigned int windowHeight, std::string windowTitle, bool showGrid = false);
 
     void runLoop();
-    
+
     void addObject(const std::shared_ptr<Object>& obj);
-    
+
     void removeObject(const std::shared_ptr<Object>& obj);
 
     std::weak_ptr<sf::RenderWindow> getWindow() const;
-    
+
     std::shared_ptr<ObjectFactory> getFactory() const;
 
     std::shared_ptr<InputManager> getInputManager() const;
@@ -145,8 +145,14 @@ private:
     std::shared_ptr<InputManager> inputManager;
 
     std::shared_ptr<World> world;
-    
+
+    bool showGrid;
+
+    sf::VertexArray gridLines;
+
     sf::Event currentInputEvent;
+
+    void buildGrid();
 
     void updateWindow() const;
 

@@ -10,7 +10,7 @@ public:
 
     virtual void becomeEaten() override;
 
-    virtual float getRadius() override;
+    virtual float getArea() override;
 
     virtual sf::Vector2f getPosition() override;
 
