@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "../Core/GameLoop/GameLoop.h"
 #include "../Core/Object/Object.h"
 
 class Wall;
 class PlayerController;
 class Unit;
+class FoodManager;
 
 namespace sf
 {
@@ -33,21 +33,13 @@ private:
 
     std::vector<std::shared_ptr<Wall>> walls;
 
+    std::shared_ptr<FoodManager> foodManager;
+
     sf::Vector2f mapSize;
 
-    float spawnTimer;
-
-    float foodSpawnInterval;
-
     void generateWalls();
-    
+
     void generatePlayer();
 
     void generateUnits();
-
-    void spawnFood();
-
-    sf::Vector2f getRandomLocation();
-
-    sf::Color getRandomColor();
 };

@@ -1,6 +1,7 @@
 ﻿#include "GameLoop.h"
 
 #include <optional>
+#include <ranges>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "../Components/CameraComponent.h"
 #include "../Input/InputManager.h"
@@ -110,12 +111,9 @@ void GameLoop::updateWindow() const
         window->draw(gridLines);
     }
 
-    for (const auto& shape : drawableShapes)
+    for (const auto& shape : drawableShapes | std::views::filter([](const auto& s) { return s != nullptr; }))
     {
-        if (shape)
-        {
-            window->draw(*shape);
-        }
+        window->draw(*shape);
     }
 
     window->display();
@@ -123,30 +121,23 @@ void GameLoop::updateWindow() const
 
 void GameLoop::refreshActiveCamera()
 {
-    for (const auto& obj : cameraProviders)
-    {
-        if (!obj)
-        {
-            continue;
-        }
+    auto validProviders = cameraProviders | std::views::filter([](const auto& obj) { return obj != nullptr; });
 
+    auto it = std::ranges::find_if(validProviders, [this](const auto& obj) {
         auto provider = std::dynamic_pointer_cast<ICameraProvider>(obj);
         if (!provider || !provider->getIsMainProvider())
-        {
-            continue;
-        }
-
+            return false;
         auto camComp = provider->getCameraComponent();
-        if (!camComp || currentCamera == camComp)
-        {
-            continue;
-        }
-        
-        currentCamera = camComp;
-        currentCamera->setOwnerPawn(std::dynamic_pointer_cast<Pawn>(obj));
+        return camComp && currentCamera != camComp;
+    });
+
+    if (it != validProviders.end())
+    {
+        auto provider = std::dynamic_pointer_cast<ICameraProvider>(*it);
+        currentCamera = provider->getCameraComponent();
+        currentCamera->setOwnerPawn(std::dynamic_pointer_cast<Pawn>(*it));
         activeView = std::make_shared<sf::View>(currentCamera->getCurrentPosition(), sf::Vector2f(1920,1080));
         window->setView(*activeView);
-        return;
     }
 }
 
@@ -191,20 +182,12 @@ void GameLoop::updateObjectsCollision()
 
 void GameLoop::cleanupInactiveObjects()
 {
-    for (const auto& currentObject : tickableObjects)
+    for (const auto& obj : tickableObjects| std::views::filter([](const auto& o) { return o && !o->getIsActive(); }))
     {
-        if (!currentObject)
+        const auto& shape = obj->getShapeBase();
+        if (shape)
         {
-            continue;
-        }
-
-        if (!currentObject->getIsActive())
-        {
-            const auto& shape = currentObject->getShapeBase();
-            if (shape)
-            {
-                drawableShapes.remove(shape);
-            }
+            drawableShapes.remove(shape);
         }
     }
 

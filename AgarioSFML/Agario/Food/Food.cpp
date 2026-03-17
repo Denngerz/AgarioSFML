@@ -5,8 +5,6 @@ Food::Food(std::shared_ptr<ObjectFactory> objFactory,float radius, sf::Color cir
     :Object(objFactory),
     circleRadius(radius)
 {
-    circleRadius = radius;
-    
     circleShape = std::make_shared<sf::CircleShape>(radius);
     circleShape->setOrigin(sf::Vector2f(radius, radius));
     circleShape->setFillColor(circleColor);

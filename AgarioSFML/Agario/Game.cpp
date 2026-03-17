@@ -1,17 +1,16 @@
 ﻿#include "Game.h"
 #include <random>
+#include <ranges>
 #include <SFML/Graphics.hpp>
-#include "Food/Food.h"
 #include "Controllers/PlayerController.h"
 #include "CirclePawn/Unit.h"
 #include "LevelProps/Wall.h"
+#include "FoodManager/FoodManager.h"
 #include "../Core/Utils/HelperFunctions.h"
 #include "../Core/World/World.h"
 
 Game::Game(std::shared_ptr<ObjectFactory> objectFactory)
-    : Object(objectFactory),
-      spawnTimer(0),
-      foodSpawnInterval(0.5)
+    : Object(objectFactory)
 {
     mapSize = sf::Vector2f(2000.0f, 2000.0f);
 }
@@ -28,37 +27,36 @@ void Game::beginPlay()
     generateWalls();
     generateUnits();
     generatePlayer();
+
+    foodManager = spawnObjectOfClass<FoodManager>(mapSize);
+    foodManager->updateUnits(units);
 }
 
 void Game::update(float deltaTime)
 {
-    spawnTimer += deltaTime;
-
-    if (spawnTimer >= foodSpawnInterval)
+    if (foodManager)
     {
-        spawnTimer = 0.0f;
-        spawnFood();
+        foodManager->updateUnits(units);
     }
 }
 
 std::shared_ptr<Unit> Game::getRandomUnit(std::shared_ptr<Unit> exeptionUnit) const
 {
-    std::vector<std::shared_ptr<Unit>> aliveUnits;
+    auto aliveUnits = units | std::views::filter([&exeptionUnit](const auto& unit) {
+        return unit && unit->getIsActive() && unit != exeptionUnit;
+    });
 
-    for (const auto& unit : units)
-    {
-        if (unit && unit->getIsActive() && unit != exeptionUnit)
-        {
-            aliveUnits.emplace_back(unit);
-        }
-    }
+    auto count = std::ranges::distance(aliveUnits);
 
-    if (aliveUnits.empty())
+    if (count == 0)
     {
         return nullptr;
     }
 
-    return aliveUnits[HelperFunctions::getRandomIntInRange(0, static_cast<int>(aliveUnits.size()) - 1)];
+    auto it = aliveUnits.begin();
+    std::advance(it, HelperFunctions::getRandomIntInRange(0, static_cast<int>(count) - 1));
+
+    return *it;
 }
 
 void Game::generateWalls()
@@ -78,41 +76,18 @@ void Game::generatePlayer()
 
 void Game::generateUnits()
 {
-    for (int i = 0; i < 5; ++i)
-    {
-        std::shared_ptr<Unit> unit = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), getRandomLocation(), true);
-        units.emplace_back(unit);
-    }
-}
-
-void Game::spawnFood()
-{
-    spawnObjectOfClass<Food>(10, getRandomColor(), getRandomLocation());
-}
-
-sf::Vector2f Game::getRandomLocation()
-{
     static std::mt19937 randomEngine{ std::random_device{}() };
 
     float maxX = mapSize.x - 100;
     float maxY = mapSize.y - 100;
-    
+
     std::uniform_real_distribution<float> xDistribution(-maxX, maxX);
     std::uniform_real_distribution<float> yDistribution(-maxY, maxY);
 
-    sf::Vector2f location = currentWorld->sfmlToWorld(sf::Vector2f(xDistribution(randomEngine), yDistribution(randomEngine)));
-
-    return location;
-}
-
-sf::Color Game::getRandomColor()
-{
-    static std::mt19937 randomEngine{ std::random_device{}() };
-    static std::uniform_int_distribution<int> colorDistribution(0, 255);
-
-    return sf::Color(
-        static_cast<std::uint8_t>(colorDistribution(randomEngine)),
-        static_cast<std::uint8_t>(colorDistribution(randomEngine)),
-        static_cast<std::uint8_t>(colorDistribution(randomEngine))
-    );
+    for (int i = 0; i < 5; ++i)
+    {
+        sf::Vector2f location = currentWorld->sfmlToWorld(sf::Vector2f(xDistribution(randomEngine), yDistribution(randomEngine)));
+        std::shared_ptr<Unit> unit = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), location, true);
+        units.emplace_back(unit);
+    }
 }

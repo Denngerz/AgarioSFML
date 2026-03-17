@@ -11,6 +11,7 @@ Unit::Unit(std::shared_ptr<ObjectFactory> objFactory, float radius, sf::Color ci
       speed(200),
       speedBoost(100),
       lastDeltaTime(0),
+      isSprinting(false),
       hasReachedTargetLocation(true)
 {
     isAIControlled = isAI;

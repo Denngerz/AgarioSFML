@@ -1,4 +1,6 @@
 ﻿#include "InputManager.h"
+#include <algorithm>
+#include <ranges>
 
 InputManager::InputManager()
 {
@@ -58,48 +60,34 @@ void InputManager::processCurrentFrameInputEvents()
     {
         for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
         {
-            for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
+            if (std::ranges::find(currentMapping.inputKeys, pressedKey) != currentMapping.inputKeys.end())
             {
-                if (currentKey == pressedKey)
+                auto foundCallbacks = pressedCallbacks.find(currentMapping.actionName);
+                if (foundCallbacks != pressedCallbacks.end())
                 {
-                    auto foundCallbacks = pressedCallbacks.find(currentMapping.actionName);
-                    if (foundCallbacks != pressedCallbacks.end())
+                    for (const auto& callback : foundCallbacks->second)
                     {
-                        for (const auto& callback : foundCallbacks->second)
-                        {
-                            callback();
-                        }
+                        callback();
                     }
-
-                    break;
                 }
             }
         }
     }
 
-    for (const auto& [key, isPressed] : keyStates)
+    for (const auto& [key, isPressed] : keyStates
+        | std::views::filter([](const auto& pair) { return pair.second; }))
     {
-        if (!isPressed)
-        {
-            continue;
-        }
-
         for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
         {
-            for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
+            if (std::ranges::find(currentMapping.inputKeys, key) != currentMapping.inputKeys.end())
             {
-                if (currentKey == key)
+                auto foundCallbacks = heldCallbacks.find(currentMapping.actionName);
+                if (foundCallbacks != heldCallbacks.end())
                 {
-                    auto foundCallbacks = heldCallbacks.find(currentMapping.actionName);
-                    if (foundCallbacks != heldCallbacks.end())
+                    for (const auto& callback : foundCallbacks->second)
                     {
-                        for (const auto& callback : foundCallbacks->second)
-                        {
-                            callback();
-                        }
+                        callback();
                     }
-
-                    break;
                 }
             }
         }
@@ -109,20 +97,15 @@ void InputManager::processCurrentFrameInputEvents()
     {
         for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
         {
-            for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
+            if (std::ranges::find(currentMapping.inputKeys, releasedKey) != currentMapping.inputKeys.end())
             {
-                if (currentKey == releasedKey)
+                auto foundCallbacks = releasedCallbacks.find(currentMapping.actionName);
+                if (foundCallbacks != releasedCallbacks.end())
                 {
-                    auto foundCallbacks = releasedCallbacks.find(currentMapping.actionName);
-                    if (foundCallbacks != releasedCallbacks.end())
+                    for (const auto& callback : foundCallbacks->second)
                     {
-                        for (const auto& callback : foundCallbacks->second)
-                        {
-                            callback();
-                        }
+                        callback();
                     }
-
-                    break;
                 }
             }
         }
@@ -154,24 +137,15 @@ void InputManager::bindAction(const std::string& actionName, InputTriggerType tr
 
 bool InputManager::isActionPressed(const std::string& actionName) const
 {
-    for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
-    {
-        if (currentMapping.actionName != actionName)
-        {
-            continue;
-        }
+    auto matchingMappings = currentInputMappingContext.inputMappings
+        | std::views::filter([&actionName](const auto& m) { return m.actionName == actionName; });
 
-        for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
-        {
-            auto foundKey = keyStates.find(currentKey);
-            if (foundKey != keyStates.end() && foundKey->second)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return std::ranges::any_of(matchingMappings, [this](const auto& mapping) {
+        return std::ranges::any_of(mapping.inputKeys, [this](const auto& key) {
+            auto foundKey = keyStates.find(key);
+            return foundKey != keyStates.end() && foundKey->second;
+        });
+    });
 }
 
 bool InputManager::isKeyPressed(sf::Keyboard::Key key) const
@@ -188,21 +162,9 @@ bool InputManager::isKeyPressed(sf::Keyboard::Key key) const
 
 bool InputManager::doesActionContainKey(const std::string& actionName, sf::Keyboard::Key key) const
 {
-    for (const InputMapping& currentMapping : currentInputMappingContext.inputMappings)
-    {
-        if (currentMapping.actionName != actionName)
-        {
-            continue;
-        }
+    auto matchingMappings = currentInputMappingContext.inputMappings| std::views::filter([&actionName](const auto& m) { return m.actionName == actionName; });
 
-        for (const sf::Keyboard::Key& currentKey : currentMapping.inputKeys)
-        {
-            if (currentKey == key)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return std::ranges::any_of(matchingMappings, [key](const auto& mapping) {
+        return std::ranges::find(mapping.inputKeys, key) != mapping.inputKeys.end();
+    });
 }
