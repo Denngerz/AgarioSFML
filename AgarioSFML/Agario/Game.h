@@ -20,8 +20,6 @@ public:
 
     void beginPlay() override;
 
-    virtual void update(float deltaTime) override;
-
     std::shared_ptr<Unit> getRandomUnit(std::shared_ptr<Unit> exeptionUnit = nullptr) const;
 
 private:
@@ -42,4 +40,6 @@ private:
     void generatePlayer();
 
     void generateUnits();
+
+    void generateFoodManager();
 };

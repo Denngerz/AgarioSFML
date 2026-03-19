@@ -1,9 +1,13 @@
 ﻿#include "Food.h"
 #include <corecrt_math_defines.h>
 
-Food::Food(std::shared_ptr<ObjectFactory> objFactory,float radius, sf::Color circleColor, sf::Vector2f position)
+#include "../../Core/Utils/HelperFunctions.h"
+#include "../Pools/FoodPool/FoodPool.h"
+
+Food::Food(std::shared_ptr<ObjectFactory> objFactory, std::weak_ptr<FoodPool> foodPool, float radius, sf::Color circleColor, sf::Vector2f position)
     :Object(objFactory),
-    circleRadius(radius)
+    circleRadius(radius),
+    pool(foodPool)
 {
     circleShape = std::make_shared<sf::CircleShape>(radius);
     circleShape->setOrigin(sf::Vector2f(radius, radius));
@@ -15,7 +19,7 @@ Food::Food(std::shared_ptr<ObjectFactory> objFactory,float radius, sf::Color cir
 
 void Food::becomeEaten()
 {
-    destroySelf();
+    pool.lock()->releaseInstance(std::dynamic_pointer_cast<Food>(shared_from_this())); 
 }
 
 float Food::getArea()
@@ -36,4 +40,9 @@ CollisionType Food::getCollisionResponse() const
 const std::shared_ptr<sf::Shape>& Food::getShapeBase() const
 {
     return circleShape;
+}
+
+void Food::reset()
+{
+    circleShape->setFillColor(HelperFunctions::getRandomColor());
 }

@@ -27,17 +27,7 @@ void Game::beginPlay()
     generateWalls();
     generateUnits();
     generatePlayer();
-
-    foodManager = spawnObjectOfClass<FoodManager>(mapSize);
-    foodManager->updateUnits(units);
-}
-
-void Game::update(float deltaTime)
-{
-    if (foodManager)
-    {
-        foodManager->updateUnits(units);
-    }
+    generateFoodManager();
 }
 
 std::shared_ptr<Unit> Game::getRandomUnit(std::shared_ptr<Unit> exeptionUnit) const
@@ -90,4 +80,11 @@ void Game::generateUnits()
         std::shared_ptr<Unit> unit = spawnObjectOfClass<Unit>(20.0f, sf::Color(225, 0, 0), location, true);
         units.emplace_back(unit);
     }
+}
+
+void Game::generateFoodManager()
+{
+    foodManager = spawnObjectOfClass<FoodManager>(mapSize);
+
+    foodManager->initialize();
 }

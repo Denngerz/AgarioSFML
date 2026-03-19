@@ -28,3 +28,8 @@ uint8_t HelperFunctions::getRandomUInt8_t()
     int value = std::uniform_int_distribution<int>(0, 255)(rng);
     return static_cast<uint8_t>(value);
 }
+
+sf::Color HelperFunctions::getRandomColor()
+{
+    return sf::Color(getRandomUInt8_t(), getRandomUInt8_t(), getRandomUInt8_t());
+}
