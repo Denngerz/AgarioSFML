@@ -7,6 +7,7 @@
 #include "../Input/InputManager.h"
 #include "../Object/Object.h"
 #include "../Object/Pawn/Pawn.h"
+#include "../Object/Widget/Widget.h"
 #include "../Time/Time.h"
 #include "../Interfaces/ICameraProvider.h"
 #include "../World/World.h"
@@ -116,6 +117,13 @@ void GameLoop::updateWindow() const
         window->draw(*shape);
     }
 
+    window->setView(window->getDefaultView());
+
+    for (const auto& drawable : widgetDrawables | std::views::filter([](const auto& d) { return d != nullptr; }))
+    {
+        window->draw(*drawable);
+    }
+
     window->display();
 }
 
@@ -189,6 +197,11 @@ void GameLoop::cleanupInactiveObjects()
         {
             drawableShapes.remove(shape);
         }
+
+        if (auto widget = std::dynamic_pointer_cast<Widget>(obj))
+        {
+            widgetDrawables.remove(widget->getDrawable());
+        }
     }
 
     tickableObjects.clearIf(
@@ -206,6 +219,11 @@ void GameLoop::addObject(const std::shared_ptr<Object>& obj)
     }
 
     drawableShapes.add(obj->getShapeBase());
+
+    if (auto widget = std::dynamic_pointer_cast<Widget>(obj))
+    {
+        widgetDrawables.add(widget->getDrawable());
+    }
 
     if (obj->getIsTickable())
     {
@@ -232,6 +250,12 @@ void GameLoop::removeObject(const std::shared_ptr<Object>& obj)
     }
 
     drawableShapes.remove(obj->getShapeBase());
+
+    if (auto widget = std::dynamic_pointer_cast<Widget>(obj))
+    {
+        widgetDrawables.remove(widget->getDrawable());
+    }
+
     tickableObjects.remove(obj);
 
     if (std::dynamic_pointer_cast<ICameraProvider>(obj))

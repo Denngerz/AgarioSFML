@@ -97,6 +97,11 @@ void Unit::setIsAIControlled(bool isAI)
     isAIControlled = isAI;
 }
 
+bool Unit::getIsAIControlled() const
+{
+    return isAIControlled;
+}
+
 void Unit::sprint()
 {
     speed += speedBoost;

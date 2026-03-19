@@ -381,6 +381,7 @@
     <ClCompile Include="Core\Input\InputManager.cpp" />
     <ClCompile Include="Core\Object\Object.cpp" />
     <ClCompile Include="Core\Object\Pawn\Pawn.cpp" />
+    <ClCompile Include="Core\Object\Widget\Widget.cpp" />
     <ClCompile Include="Core\Time\Time.cpp" />
     <ClCompile Include="Core\Utils\HelperFunctions.cpp" />
     <ClCompile Include="Core\World\World.cpp" />
@@ -408,6 +409,7 @@
     <ClInclude Include="Core\Interfaces\IUpdatable.h" />
     <ClInclude Include="Core\Object\Object.h" />
     <ClInclude Include="Core\Object\Pawn\Pawn.h" />
+    <ClInclude Include="Core\Object\Widget\Widget.h" />
     <ClInclude Include="Core\Time\Time.h" />
     <ClInclude Include="Core\Utils\HelperFunctions.h" />
     <ClInclude Include="Core\World\World.h" />

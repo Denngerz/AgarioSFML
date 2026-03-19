@@ -11,6 +11,7 @@ class InputManager;
 class ObjectFactory;
 class Time;
 class Object;
+class Widget;
 class Factory;
 class World;
 
@@ -129,6 +130,8 @@ private:
     std::shared_ptr<Time> time;
     
     IterratableSet<sf::Shape> drawableShapes;
+
+    IterratableSet<sf::Drawable> widgetDrawables;
 
     IterratableSet<Object> tickableObjects;
 

@@ -6,6 +6,7 @@
 #include "CirclePawn/Unit.h"
 #include "LevelProps/Wall.h"
 #include "FoodManager/FoodManager.h"
+#include "UI/LeaderBoard/LeaderBoard.h"
 #include "../Core/Utils/HelperFunctions.h"
 #include "../Core/World/World.h"
 
@@ -28,6 +29,8 @@ void Game::beginPlay()
     generateUnits();
     generatePlayer();
     generateFoodManager();
+
+    spawnObjectOfClass<LeaderBoard>(units);
 }
 
 std::shared_ptr<Unit> Game::getRandomUnit(std::shared_ptr<Unit> exeptionUnit) const

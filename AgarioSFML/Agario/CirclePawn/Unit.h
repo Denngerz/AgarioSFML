@@ -38,6 +38,8 @@ public:
 
     void setIsAIControlled(bool isAI);
 
+    bool getIsAIControlled() const;
+
     void sprint();
 
     void stopSprint();
